@@ -55,7 +55,7 @@ function createAppWindow() {
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, '../src/app.html'));
+  mainWindow.loadFile(path.join(__dirname, '../public/index.html'));
   mainWindow.on('closed', handleWindowClosed);
 
   // Open DevTools in development

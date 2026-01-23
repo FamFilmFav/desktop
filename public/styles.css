@@ -1,0 +1,187 @@
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Container variants */
+.container.settings-container {
+  max-width: 500px;
+}
+
+/* Typography */
+h1 {
+  font-size: 28px;
+}
+
+h1.settings-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+
+/* Header */
+header {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons */
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #007acc;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background: #005a9e;
+}
+
+button.btn-save {
+  background: #007acc;
+  color: white;
+  flex: 1;
+  padding: 10px 20px;
+}
+
+button.btn-save:hover {
+  background: #005a9e;
+}
+
+button.btn-cancel {
+  background: #e0e0e0;
+  color: #333;
+  flex: 1;
+  padding: 10px 20px;
+}
+
+button.btn-cancel:hover {
+  background: #d0d0d0;
+}
+
+/* Content Area */
+.content {
+  background: white;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Welcome Message */
+.welcome-message {
+  text-align: center;
+  color: #666;
+}
+
+.welcome-message p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* Info Box */
+.info-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e7f3ff;
+  border-left: 4px solid #007acc;
+  border-radius: 4px;
+}
+
+.info-box strong {
+  color: #005a9e;
+}
+
+code {
+  background: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Settings Specific */
+.setting-group {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.setting-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.setting-group input,
+.setting-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Status Messages */
+.status-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  display: none;
+}
+
+.status-message.success {
+  background: #d4edda;
+  color: #155724;
+  display: block;
+}
+
+.status-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  display: block;
+}
