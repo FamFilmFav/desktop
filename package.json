@@ -1,0 +1,50 @@
+{
+  "name": "famfilmfav-desktop",
+  "version": "1.0.0",
+  "description": "Family Film Favorites Desktop App",
+  "main": "src/main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --remote-debugging-port=9222",
+    "build": "electron-builder",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": [
+    "electron",
+    "tray",
+    "app"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^40.0.0"
+  },
+  "dependencies":{
+    "express": "^5.2.1"
+  },
+  "build": {
+    "appId": "com.famfilmfav.app",
+    "productName": "FamFilmFav",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}
