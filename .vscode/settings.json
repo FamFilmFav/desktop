@@ -7,7 +7,7 @@
   },
   "files.exclude": {
     "node_modules/": true,
-    "dist/": true
+    "dist/": false
   },
   "search.exclude": {
     "node_modules/": true,

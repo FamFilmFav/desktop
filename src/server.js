@@ -2,10 +2,10 @@ const path = require('path');
 const express = require('express');
 
 function startServer(app, port) {
-  // Serve static files (the app UI)
-  app.use(express.static(path.join(__dirname, '../public')));
+  const distPath = path.join(__dirname, '../dist');
+  const publicPath = path.join(__dirname, '../public');
 
-  // API endpoint examples
+  // API endpoints FIRST
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
@@ -15,8 +15,13 @@ function startServer(app, port) {
     res.json({ version: packageJson.version });
   });
 
-  // Serve index.html for any unknown routes (SPA fallback)
-  app.get('*path', (req, res) => {
+  // Static files with options
+  app.use('/dist', express.static(distPath));
+  
+  app.use(express.static(publicPath));
+
+  // Catch-all
+  app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
   });
 

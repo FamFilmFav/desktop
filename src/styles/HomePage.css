@@ -1,0 +1,102 @@
+/* HomePage Styles */
+.home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #2d2d2daa;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #404040;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+#headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.server-status {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.server-status.online {
+  color: #155724;
+}
+
+.server-status.offline {
+  color: #721c24;
+}
+
+.app-content {
+  background: #2d2d2daa;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 1px solid #404040;
+  flex: 1;
+}
+
+.welcome-message {
+  text-align: center;
+  color: #b0b0b0;
+}
+
+.welcome-message h2 {
+  font-size: 1.5em;
+  margin: 0 0 10px 0;
+}
+
+.welcome-message p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.welcome-message h3 {
+  font-size: 1.2em;
+  margin-top: 30px;
+}
+
+.welcome-message ul {
+  text-align: left;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.welcome-message li {
+  margin: 8px 0;
+}
+
+.info-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #1a3a4a;
+  border-left: 4px solid #00bcd4;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.info-box strong {
+  color: #4dd0e1;
+}
+
+.access-url {
+  background: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  color: #4dd0e1;
+}

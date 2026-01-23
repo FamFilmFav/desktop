@@ -1,0 +1,114 @@
+/* SettingsPage Styles */
+.settings-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+}
+
+.settings-container {
+  background: #2d2d2daa;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 1px solid #404040;
+  width: 100%;
+  max-width: 500px;
+}
+
+.settings-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+}
+
+.setting-group {
+  background: #2d2d2d;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 1px solid #404040;
+}
+
+.setting-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.setting-group input,
+.setting-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #505050;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #1e1e1e;
+  color: #e0e0e0;
+  font-family: inherit;
+}
+
+.setting-group input:focus,
+.setting-group select:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  flex: 1;
+}
+
+.btn-save {
+  background: #007acc;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #005a9e;
+}
+
+.btn-cancel {
+  background: #404040;
+  color: #e0e0e0;
+}
+
+.btn-cancel:hover {
+  background: #505050;
+}
+
+.status-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-message.success {
+  background: #1b5e20;
+  color: #81c784;
+  display: block;
+}
+
+.status-message.error {
+  background: #b71c1c;
+  color: #ef5350;
+  display: block;
+}
