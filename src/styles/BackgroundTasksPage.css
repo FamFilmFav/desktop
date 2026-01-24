@@ -1,0 +1,109 @@
+/* BackgroundTasksPage Styles */
+.background-tasks-page {
+  min-height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+}
+
+.background-tasks-container {
+  background: #2d2d2daa;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 1px solid #404040;
+  width: 100%;
+  max-width: 560px;
+}
+
+.background-tasks-title {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #e0e0e0;
+}
+
+.tasks-section {
+  margin-bottom: 24px;
+}
+
+.tasks-section:last-child {
+  margin-bottom: 0;
+}
+
+.tasks-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #b0b0b0;
+  margin-bottom: 12px;
+}
+
+.active-task {
+  background: #2d2d2d;
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid #404040;
+}
+
+.active-task-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e0e0e0;
+  margin-bottom: 8px;
+}
+
+.active-task-step {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin-bottom: 12px;
+}
+
+.progress-bar-wrap {
+  height: 8px;
+  background: #1e1e1e;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #007acc;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #808080;
+}
+
+.no-active-task,
+.no-queued-tasks {
+  background: #2d2d2d;
+  padding: 16px;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  color: #808080;
+  font-size: 14px;
+}
+
+.queued-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.queued-item {
+  background: #2d2d2d;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  color: #e0e0e0;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.queued-item:last-child {
+  margin-bottom: 0;
+}

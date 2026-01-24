@@ -10,5 +10,13 @@ contextBridge.exposeInMainWorld('electron', {
   // Allow receiving messages from main process
   onSettingsSaved: (callback) => {
     ipcRenderer.on('settings-saved', callback);
+  },
+  enqueueBackgroundTask: (taskType, args) =>
+    ipcRenderer.invoke('enqueue-background-task', taskType, args ?? {}),
+  getBackgroundTasks: () => ipcRenderer.invoke('get-background-tasks'),
+  onBackgroundTaskUpdate: (callback) => {
+    const handler = (event, data) => callback(data);
+    ipcRenderer.on('background-task-update', handler);
+    return () => ipcRenderer.removeListener('background-task-update', handler);
   }
 });

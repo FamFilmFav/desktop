@@ -108,6 +108,71 @@
   padding: 0 16px;
 }
 
+.menu-system {
+  margin-top: 16px;
+  padding: 0 16px;
+}
+
+.menu-system-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 4px;
+  margin-bottom: 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #808080;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+  font-family: inherit;
+  text-align: left;
+}
+
+.menu-system-toggle:hover {
+  color: #b0b0b0;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.menu-system-chevron {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.menu-system.expanded .menu-system-chevron {
+  transform: rotate(90deg);
+}
+
+.menu-system-label {
+  flex: 1;
+}
+
+.menu-system-items {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.2s ease;
+}
+
+.menu-system.expanded .menu-system-items {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 4px;
+}
+
+.menu-system .menu-item {
+  margin-bottom: 0;
+}
+
 /* Menu Footer (Settings at Bottom) */
 .menu-footer {
   border-top: 1px solid #404040;

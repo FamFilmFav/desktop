@@ -7,6 +7,9 @@ export default function SettingsPage() {
   const [tmdbApiKey, setTmdbApiKey] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
   const [statusType, setStatusType] = useState('');
+  const [backgroundTaskMessage, setBackgroundTaskMessage] = useState('');
+  const [activeTask, setActiveTask] = useState(null);
+  const [queue, setQueue] = useState([]);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -29,6 +32,24 @@ export default function SettingsPage() {
     };
 
     loadSettings();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const state = await window.electron.getBackgroundTasks?.();
+        setActiveTask(state?.active ?? null);
+      } catch {
+        setActiveTask(null);
+      }
+    };
+    load();
+    const unsubscribe = window.electron.onBackgroundTaskUpdate?.((state) => {
+      setActiveTask(state?.active ?? null);
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, []);
 
   const saveSettings = async () => {
@@ -61,6 +82,22 @@ export default function SettingsPage() {
   const showMessage = (message, type) => {
     setStatusMessage(message);
     setStatusType(type);
+  };
+
+  const enqueueBackgroundTask = async (taskType) => {
+    try {
+      const result = await window.electron.enqueueBackgroundTask?.(taskType);
+      if (result?.success) {
+        setBackgroundTaskMessage('Task queued. See System → Background Tasks.');
+        setTimeout(() => setBackgroundTaskMessage(''), 4000);
+      } else {
+        setBackgroundTaskMessage(result?.error || 'Failed to queue task.');
+        setTimeout(() => setBackgroundTaskMessage(''), 5000);
+      }
+    } catch (err) {
+      setBackgroundTaskMessage('Error: ' + (err.message || 'Could not queue task'));
+      setTimeout(() => setBackgroundTaskMessage(''), 5000);
+    }
   };
 
   const handleCancel = () => {
@@ -124,6 +161,31 @@ export default function SettingsPage() {
             value={tmdbApiKey}
             onChange={(e) => setTmdbApiKey(e.target.value)}
           />
+        </div>
+
+        <div className="setting-group">
+          <label>Background Tasks</label>
+          <div className="background-task-buttons">
+            <button
+              type="button"
+              className="btn-background-task"
+              onClick={() => enqueueBackgroundTask('import-watchmode')}
+              disabled={activeTask?.type === 'import-watchmode'}
+            >
+              Import Watchmode Database
+            </button>
+            <button
+              type="button"
+              className="btn-background-task"
+              onClick={() => enqueueBackgroundTask('import-tmdb')}
+              disabled={activeTask?.type === 'import-tmdb'}
+            >
+              Import TMDB Database
+            </button>
+          </div>
+          {backgroundTaskMessage && (
+            <div className="background-task-message">{backgroundTaskMessage}</div>
+          )}
         </div>
 
         <div className="button-group">

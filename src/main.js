@@ -4,6 +4,7 @@ const express = require('express');
 const server = require('./server');
 const db = require('./database');
 const SettingsManager = require('./settings-manager');
+const backgroundTaskManager = require('./background-task-manager');
 
 let mainWindow = null;
 let tray = null;
@@ -30,6 +31,12 @@ function createAppWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '../public/index.html'));
   mainWindow.on('closed', handleWindowClosed);
+
+  backgroundTaskManager.setNotifyFn(() => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('background-task-update', backgroundTaskManager.getState());
+    }
+  });
 
   // Open DevTools in development
   // mainWindow.webContents.openDevTools();
@@ -91,7 +98,8 @@ app.on('ready', () => {
   settingsManager.initialize();
   
   createTray();
-  
+  createAppWindow();
+
   // Load settings and start server with configured port
   try {
     const port = settingsManager.get('webPort') || 3000;
@@ -144,6 +152,14 @@ ipcMain.handle('save-settings', async (event, settings) => {
     console.error('Error saving settings:', error.message);
     return { success: false, error: error.message };
   }
+});
+
+ipcMain.handle('enqueue-background-task', (event, taskType, args) => {
+  return backgroundTaskManager.enqueue(taskType, args ?? {});
+});
+
+ipcMain.handle('get-background-tasks', () => {
+  return backgroundTaskManager.getState();
 });
 
 app.on('before-quit', () => {
