@@ -5,10 +5,14 @@
       "name": "Electron Main + Renderer",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/electron",
-      "args": [".", "--remote-debugging-port=9223"],
-      "restart": true,
+      "preLaunchTask": "webpack:serve",
+      "program": ".",
+      "args": ["--remote-debugging-port=9222", "--inspect"],
+      "env": {
+        "ELECTRON_START_URL": "http://localhost:8080"
+      },
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd",
+      "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "skipFiles": [
@@ -19,7 +23,7 @@
       "name": "Electron Renderer",
       "type": "chrome",
       "request": "attach",
-      "port": 9223,
+      "port": 9222,
       "pathMapping": {
         "/": "${workspaceFolder}/",
         "file://": "${workspaceFolder}/"
