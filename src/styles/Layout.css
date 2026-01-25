@@ -41,7 +41,7 @@
 }
 
 .hamburger-line.open:nth-child(1) {
-  transform: rotate(45deg) translate(7px, 7px);
+  transform: rotate(45deg) translate(5px, 5px);
 }
 
 .hamburger-line.open:nth-child(2) {
@@ -49,7 +49,7 @@
 }
 
 .hamburger-line.open:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
+  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* Menu Overlay */
