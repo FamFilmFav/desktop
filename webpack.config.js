@@ -8,7 +8,6 @@ module.exports = {
   mode: isDev ? 'development' : 'production',
   entry: {
     'app-home': './src/index.js',
-    'app-settings': './src/settings.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
