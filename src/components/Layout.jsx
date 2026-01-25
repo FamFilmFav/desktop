@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Layout.css';
 import HomePage from './HomePage';
 import SettingsPage from './SettingsPage';
@@ -8,6 +8,8 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [systemExpanded, setSystemExpanded] = useState(false);
+  const [activeTask, setActiveTask] = useState(null);
+  const [queue, setQueue] = useState([]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -21,6 +23,27 @@ export default function Layout() {
     setCurrentPage(page);
     closeMenu();
   };
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const state = await window.electron.getBackgroundTasks?.();
+        setActiveTask(state?.active ?? null);
+        setQueue(state?.queue ?? []);
+      } catch {
+        setActiveTask(null);
+        setQueue([]);
+      }
+    };
+    load();
+    const unsubscribe = window.electron.onBackgroundTaskUpdate?.((state) => {
+      setActiveTask(state?.active ?? null);
+      setQueue(state?.queue ?? []);
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -90,6 +113,9 @@ export default function Layout() {
                     <path d="M6 2v5l6 5v2l-6 5v5h12v-5l-6-5v-2l6-5V2H6z"/>
                   </svg>
                   <span>Background Tasks</span>
+                  {(activeTask || queue.length > 0) && (
+                    <span className="menu-badge">{(activeTask ? 1 : 0) + queue.length}</span>
+                  )}
                 </button>
               </div>
             </div>
