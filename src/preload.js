@@ -14,6 +14,8 @@ contextBridge.exposeInMainWorld('electron', {
   enqueueBackgroundTask: (taskType, args) =>
     ipcRenderer.invoke('enqueue-background-task', taskType, args ?? {}),
   getBackgroundTasks: () => ipcRenderer.invoke('get-background-tasks'),
+  cancelActiveBackgroundTask: () => ipcRenderer.invoke('cancel-active-background-task'),
+  removeQueuedBackgroundTask: (taskId) => ipcRenderer.invoke('remove-queued-background-task', taskId),
   onBackgroundTaskUpdate: (callback) => {
     const handler = (event, data) => callback(data);
     ipcRenderer.on('background-task-update', handler);

@@ -17,7 +17,7 @@ class ImportWatchmodeTask extends BackgroundTask {
     try {
       // Step 1: Download data (indeterminate progress)
       context.reportProgress({ description: 'Downloading data...' });
-      tempFilePath = await this.downloadCsv();
+      tempFilePath = await this.downloadCsv(context.abortSignal);
       
       // Step 2: Process records
       context.reportProgress({ description: 'Processing records...' });
@@ -29,6 +29,9 @@ class ImportWatchmodeTask extends BackgroundTask {
       // Step 3: Complete
       context.reportProgress({ description: 'Complete' });
     } catch (error) {
+      if (error.name === 'AbortError' || context.isCancelled()) {
+        throw new Error('Task cancelled');
+      }
       console.error('ImportWatchmodeTask error:', error);
       throw error;
     } finally {
@@ -39,7 +42,7 @@ class ImportWatchmodeTask extends BackgroundTask {
     }
   }
 
-  async downloadCsv() {
+  async downloadCsv(abortSignal) {
     return new Promise((resolve, reject) => {
       const url = 'https://api.watchmode.com/datasets/title_id_map.csv';
       const tempDir = os.tmpdir();
@@ -47,14 +50,16 @@ class ImportWatchmodeTask extends BackgroundTask {
       
       const file = fs.createWriteStream(tempFilePath);
       
-      https.get(url, (res) => {
+      const req = https.get(url, { signal: abortSignal }, (res) => {
         res.pipe(file);
         
         file.on('finish', () => {
           file.close();
           resolve(tempFilePath);
         });
-      }).on('error', (err) => {
+      });
+      
+      req.on('error', (err) => {
         fs.unlink(tempFilePath, () => {}); // Delete the file on error
         reject(err);
       });
@@ -80,6 +85,9 @@ class ImportWatchmodeTask extends BackgroundTask {
     let linesProcessed = 0;
 
     for await (const line of rl) {
+      if (context.isCancelled()) {
+        throw new Error('Task cancelled');
+      }
       lineNumber++;
       bytesRead += Buffer.byteLength(line, 'utf8') + 1; // +1 for newline
       

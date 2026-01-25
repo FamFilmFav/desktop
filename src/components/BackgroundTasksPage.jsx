@@ -31,6 +31,29 @@ export default function BackgroundTasksPage() {
     : null; // null for indeterminate
   const isIndeterminate = progressPercent === null;
 
+
+  const cancelActiveTask = async () => {
+    try {
+      const result = await window.electron.cancelActiveBackgroundTask?.();
+      if (!result?.success) {
+        console.error('Failed to cancel active task:', result?.error);
+      }
+    } catch (err) {
+      console.error('Error cancelling task:', err);
+    }
+  };
+
+  const removeQueuedTask = async (taskId) => {
+    try {
+      const result = await window.electron.removeQueuedBackgroundTask?.(taskId);
+      if (!result?.success) {
+        console.error('Failed to remove queued task:', result?.error);
+      }
+    } catch (err) {
+      console.error('Error removing task:', err);
+    }
+  };
+
   return (
     <div className="background-tasks-page">
       <div className="background-tasks-container">
@@ -56,6 +79,13 @@ export default function BackgroundTasksPage() {
                   : `${progressPercent}% complete`
                 }
               </div>
+              <button
+                type="button"
+                className="btn-cancel-task"
+                onClick={cancelActiveTask}
+              >
+                Cancel Task
+              </button>
             </div>
           ) : (
             <div className="no-active-task">No task running</div>
@@ -68,7 +98,15 @@ export default function BackgroundTasksPage() {
             <ul className="queued-list">
               {queue.map((t) => (
                 <li key={t.id} className="queued-item">
-                  {t.label}
+                  <span className="queued-item-label">{t.label}</span>
+                  <button
+                    type="button"
+                    className="btn-remove-task"
+                    onClick={() => removeQueuedTask(t.id)}
+                    aria-label={`Remove ${t.label}`}
+                  >
+                    Remove
+                  </button>
                 </li>
               ))}
             </ul>

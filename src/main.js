@@ -168,6 +168,14 @@ ipcMain.handle('get-background-tasks', () => {
   return backgroundTaskManager.getState();
 });
 
+ipcMain.handle('cancel-active-background-task', () => {
+  return backgroundTaskManager.cancelActive();
+});
+
+ipcMain.handle('remove-queued-background-task', (event, taskId) => {
+  return backgroundTaskManager.removeQueued(taskId);
+});
+
 // Movies database operations
 ipcMain.handle('movies-create', (event, movieData) => {
   try {

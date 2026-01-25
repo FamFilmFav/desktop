@@ -93,6 +93,22 @@
   color: #808080;
 }
 
+.btn-cancel-task {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #d13438;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel-task:hover {
+  background: #b02e32;
+}
+
 .no-active-task,
 .no-queued-tasks {
   background: #2d2d2d;
@@ -117,8 +133,30 @@
   color: #e0e0e0;
   font-size: 14px;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .queued-item:last-child {
   margin-bottom: 0;
+}
+
+.queued-item-label {
+  flex: 1;
+}
+
+.btn-remove-task {
+  padding: 4px 8px;
+  background: #d13438;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-remove-task:hover {
+  background: #b02e32;
 }

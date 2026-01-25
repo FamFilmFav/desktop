@@ -5,9 +5,11 @@
  *
  * @typedef {Object} TaskContext
  * @property {function} reportProgress - Call with { current, max, description }
+ * @property {function} isCancelled - Returns true if the task has been cancelled
+ * @property {AbortSignal} abortSignal - Abort signal for cancellable operations
  *
  * @typedef {Object} ProgressReport
- * @property {number} [current] - Current progress value (if undefined, indeterminate)
+ * @property {number} [current] - Current progress value
  * @property {number} [max] - Maximum progress value
  * @property {string} [description] - Human-readable description of current progress
  */

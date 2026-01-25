@@ -15,10 +15,13 @@ class ImportTmdbTask extends BackgroundTask {
   async runTask(args, context) {
     const totalSteps = STEPS.length;
     for (let i = 0; i < totalSteps; i++) {
-      context.reportProgress({ currentStep: i, totalSteps, stepLabel: STEPS[i] });
+      if (context.isCancelled()) {
+        throw new Error('Task cancelled');
+      }
+      context.reportProgress({ current: i + 1, max: totalSteps, description: STEPS[i] });
       await new Promise((r) => setTimeout(r, STEP_DURATION_MS));
     }
-    context.reportProgress({ currentStep: totalSteps, totalSteps, stepLabel: 'Complete' });
+    context.reportProgress({ current: totalSteps, max: totalSteps, description: 'Complete' });
   }
 }
 
