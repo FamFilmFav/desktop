@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const readline = require('readline');
+const { parse } = require('csv-parse/sync');
 const { getModels } = require('../database');
 
 class ImportWatchmodeTask extends BackgroundTask {
@@ -81,7 +82,7 @@ class ImportWatchmodeTask extends BackgroundTask {
 
     let lineNumber = 0;
     let bytesRead = 0;
-    let columnIndices = null;
+    let headers = null;
     let linesProcessed = 0;
 
     for await (const line of rl) {
@@ -90,77 +91,57 @@ class ImportWatchmodeTask extends BackgroundTask {
       }
       lineNumber++;
       bytesRead += Buffer.byteLength(line, 'utf8') + 1; // +1 for newline
-      
+
       if (lineNumber === 1) {
         // Parse header
-        columnIndices = this.parseHeader(line);
+        const headerRecords = parse(line + '\n', { trim: true });
+        headers = headerRecords[0].map(h => h.toLowerCase());
         continue;
       }
-      
-      // Process data line
-      const record = this.parseLine(line, columnIndices);
+
+      // Parse data line
+      const records = parse(line + '\n', { columns: headers, trim: true });
+      const record = records[0];
+
       if (record) {
-        models.movies.upsertFromWatchmode(
-          record.watchmodeId,
-          record.tmdbId,
-          record.title,
-          record.year
-        );
+        const watchmodeId = record['watchmode id'];
+        const tmdbType = record['tmdb type'];
+        const tmdbId = record['tmdb id'];
+        const title = record['title'];
+        const year = record['year'];
+
+        if (tmdbType && tmdbType.toLowerCase() === 'movie') {
+          models.movies.upsertFromWatchmode(
+            watchmodeId,
+            tmdbId,
+            title,
+            year
+          );
+        }
+
         linesProcessed++;
       }
-      
-      // Yield control to event loop every 10 lines to prevent UI freezing
+
+      // Yield control to event loop every 10 titles to prevent UI freezing
       if (linesProcessed % 10 === 0) {
         await new Promise(resolve => setTimeout(resolve, 0));
-        
-        context.reportProgress({ 
+
+        context.reportProgress({
           current: bytesRead,
           max: totalBytes,
-          description: `Processing records... ${linesProcessed} lines processed`
+          description: `Processing records... ${linesProcessed} titles processed`
         });
       }
     }
-    
+
     // Final progress report
-    context.reportProgress({ 
+    context.reportProgress({
       current: bytesRead,
       max: totalBytes,
-      description: `Processing records... ${linesProcessed} lines processed`
+      description: `Processing records... ${linesProcessed} titles processed`
     });
   }
 
-  parseHeader(headerLine) {
-    const headers = headerLine.split(',').map(h => h.trim().toLowerCase());
-    const indices = {};
-    
-    headers.forEach((header, index) => {
-      if (header.includes('watchmode') || header === 'id') {
-        indices.watchmodeId = index;
-      } else if (header.includes('tmdb')) {
-        indices.tmdbId = index;
-      } else if (header === 'title' || header === 'name') {
-        indices.title = index;
-      } else if (header === 'year' || header === 'release_year') {
-        indices.year = index;
-      }
-    });
-    
-    return indices;
-  }
-
-  parseLine(line, columnIndices) {
-    const parts = line.split(',');
-    if (parts.length <= Math.max(columnIndices.watchmodeId || 0, columnIndices.tmdbId || 0, columnIndices.title || 0, columnIndices.year || 0)) {
-      return null; // Invalid line
-    }
-    
-    return {
-      watchmodeId: parts[columnIndices.watchmodeId]?.trim() || '',
-      tmdbId: parts[columnIndices.tmdbId]?.trim() || '',
-      title: parts[columnIndices.title]?.trim() || '',
-      year: parts[columnIndices.year]?.trim() || ''
-    };
-  }
 }
 
 module.exports = ImportWatchmodeTask;
