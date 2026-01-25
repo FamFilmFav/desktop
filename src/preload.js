@@ -18,5 +18,16 @@ contextBridge.exposeInMainWorld('electron', {
     const handler = (event, data) => callback(data);
     ipcRenderer.on('background-task-update', handler);
     return () => ipcRenderer.removeListener('background-task-update', handler);
+  },
+  // Movies database API
+  movies: {
+    create: (movieData) => ipcRenderer.invoke('movies-create', movieData),
+    getById: (id) => ipcRenderer.invoke('movies-get-by-id', id),
+    getByWatchdogId: (watchdogId) => ipcRenderer.invoke('movies-get-by-watchdog-id', watchdogId),
+    getByTmdbId: (tmdbId) => ipcRenderer.invoke('movies-get-by-tmdb-id', tmdbId),
+    getAll: () => ipcRenderer.invoke('movies-get-all'),
+    update: (id, movieData) => ipcRenderer.invoke('movies-update', id, movieData),
+    delete: (id) => ipcRenderer.invoke('movies-delete', id),
+    searchByTitle: (searchTerm) => ipcRenderer.invoke('movies-search-by-title', searchTerm)
   }
 });

@@ -24,9 +24,9 @@ function payload(entry) {
     type: entry.type,
     label,
     status: entry.status,
-    currentStep: entry.currentStep ?? 0,
-    totalSteps: entry.totalSteps ?? 0,
-    stepLabel: entry.stepLabel ?? ''
+    current: entry.current,
+    max: entry.max,
+    description: entry.description ?? ''
   };
 }
 
@@ -36,20 +36,20 @@ async function processQueue() {
   active = {
     ...entry,
     status: 'running',
-    currentStep: 0,
-    totalSteps: 0,
-    stepLabel: ''
+    current: undefined,
+    max: undefined,
+    description: ''
   };
   emitUpdate();
 
   const TaskClass = TASK_REGISTRY[entry.type];
   const task = new TaskClass();
   const context = {
-    reportProgress: ({ currentStep, totalSteps, stepLabel }) => {
+    reportProgress: ({ current, max, description }) => {
       if (!active) return;
-      active.currentStep = currentStep;
-      active.totalSteps = totalSteps;
-      active.stepLabel = stepLabel ?? '';
+      active.current = current;
+      active.max = max;
+      active.description = description ?? '';
       emitUpdate();
     }
   };
@@ -94,9 +94,9 @@ function enqueue(type, args = {}) {
     type,
     args,
     status: 'queued',
-    currentStep: 0,
-    totalSteps: 0,
-    stepLabel: ''
+    current: undefined,
+    max: undefined,
+    description: ''
   };
   queue.push(entry);
   emitUpdate();

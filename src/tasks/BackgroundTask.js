@@ -1,15 +1,15 @@
 /**
  * Interface for background tasks run by the background-task-manager.
  * Implement runTask(args, context). Use context.reportProgress() to report
- * generic status (currentStep, totalSteps, stepLabel) to the manager.
+ * generic status (current, max, description) to the manager.
  *
  * @typedef {Object} TaskContext
- * @property {function} reportProgress - Call with { currentStep, totalSteps, stepLabel }
+ * @property {function} reportProgress - Call with { current, max, description }
  *
  * @typedef {Object} ProgressReport
- * @property {number} currentStep - 0-based step index
- * @property {number} totalSteps - Total number of steps
- * @property {string} [stepLabel] - Human-readable label for current step
+ * @property {number} [current] - Current progress value (if undefined, indeterminate)
+ * @property {number} [max] - Maximum progress value
+ * @property {string} [description] - Human-readable description of current progress
  */
 class BackgroundTask {
   /**

@@ -21,6 +21,44 @@ function getAppDataDir() {
 }
 
 let db = null;
+let models = null;
+
+function runMigrations() {
+  if (!db) {
+    throw new Error('Database not initialized');
+  }
+
+  const migrationsDir = path.join(__dirname, 'db', 'migrations');
+  
+  if (!fs.existsSync(migrationsDir)) {
+    console.log('No migrations directory found');
+    return;
+  }
+
+  const migrationFiles = fs.readdirSync(migrationsDir)
+    .filter(file => file.endsWith('.sql'))
+    .sort(); // Ensure migrations run in order
+
+  for (const file of migrationFiles) {
+    const filePath = path.join(migrationsDir, file);
+    const sql = fs.readFileSync(filePath, 'utf8');
+    
+    console.log(`Running migration: ${file}`);
+    db.exec(sql);
+  }
+}
+
+function initModels() {
+  if (!db) {
+    throw new Error('Database not initialized');
+  }
+
+  const MoviesModel = require('./db/models/Movies');
+  
+  models = {
+    movies: new MoviesModel(db)
+  };
+}
 
 function initDatabase() {
   const appDataDir = getAppDataDir();
@@ -34,16 +72,31 @@ function initDatabase() {
   
   // Open or create database
   db = new Database(dbPath);
+  
+  // Run migrations
+  runMigrations();
+  
+  // Initialize models
+  initModels();
 }
 
 function closeDatabase() {
   if (db) {
     db.close();
     db = null;
+    models = null;
   }
+}
+
+function getModels() {
+  if (!models) {
+    throw new Error('Database not initialized');
+  }
+  return models;
 }
 
 module.exports = {
   initDatabase,
-  closeDatabase
+  closeDatabase,
+  getModels
 };

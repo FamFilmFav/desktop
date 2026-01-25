@@ -26,17 +26,10 @@ export default function BackgroundTasksPage() {
     };
   }, []);
 
-  const totalSteps = active?.totalSteps || 1;
-  const displayTotal = active?.totalSteps || 3;
-  const progressPercent = active
-    ? Math.min(100, Math.round(((active.currentStep || 0) / totalSteps) * 100))
-    : 0;
-  const stepDisplay =
-    active?.status === 'completed'
-      ? 'Complete'
-      : active
-        ? `Step ${Math.min((active.currentStep || 0) + 1, displayTotal)} of ${displayTotal}`
-        : '';
+  const progressPercent = active && active.current !== undefined && active.max
+    ? Math.min(100, Math.round((active.current / active.max) * 100))
+    : null; // null for indeterminate
+  const isIndeterminate = progressPercent === null;
 
   return (
     <div className="background-tasks-page">
@@ -49,15 +42,20 @@ export default function BackgroundTasksPage() {
             <div className="active-task">
               <div className="active-task-label">{active.label}</div>
               <div className="active-task-step">
-                {active.stepLabel || `Step ${(active.currentStep || 0) + 1} of ${active.totalSteps || 3}`}
+                {active.description || 'Working...'}
               </div>
               <div className="progress-bar-wrap">
                 <div
-                  className="progress-bar-fill"
-                  style={{ width: `${progressPercent}%` }}
+                  className={`progress-bar-fill ${isIndeterminate ? 'indeterminate' : ''}`}
+                  style={isIndeterminate ? {} : { width: `${progressPercent}%` }}
                 />
               </div>
-              <div className="progress-text">{stepDisplay}</div>
+              <div className="progress-text">
+                {isIndeterminate 
+                  ? 'In progress...' 
+                  : `${progressPercent}% complete`
+                }
+              </div>
             </div>
           ) : (
             <div className="no-active-task">No task running</div>

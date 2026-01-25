@@ -168,6 +168,95 @@ ipcMain.handle('get-background-tasks', () => {
   return backgroundTaskManager.getState();
 });
 
+// Movies database operations
+ipcMain.handle('movies-create', (event, movieData) => {
+  try {
+    const models = db.getModels();
+    const id = models.movies.create(movieData);
+    return { success: true, data: id };
+  } catch (error) {
+    console.error('Error creating movie:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-get-by-id', (event, id) => {
+  try {
+    const models = db.getModels();
+    const movie = models.movies.getById(id);
+    return { success: true, data: movie };
+  } catch (error) {
+    console.error('Error getting movie by ID:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-get-by-watchdog-id', (event, watchdogId) => {
+  try {
+    const models = db.getModels();
+    const movie = models.movies.getByWatchdogId(watchdogId);
+    return { success: true, data: movie };
+  } catch (error) {
+    console.error('Error getting movie by Watchdog ID:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-get-by-tmdb-id', (event, tmdbId) => {
+  try {
+    const models = db.getModels();
+    const movie = models.movies.getByTmdbId(tmdbId);
+    return { success: true, data: movie };
+  } catch (error) {
+    console.error('Error getting movie by TMDB ID:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-get-all', () => {
+  try {
+    const models = db.getModels();
+    const movies = models.movies.getAll();
+    return { success: true, data: movies };
+  } catch (error) {
+    console.error('Error getting all movies:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-update', (event, id, movieData) => {
+  try {
+    const models = db.getModels();
+    const success = models.movies.update(id, movieData);
+    return { success };
+  } catch (error) {
+    console.error('Error updating movie:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-delete', (event, id) => {
+  try {
+    const models = db.getModels();
+    const success = models.movies.delete(id);
+    return { success };
+  } catch (error) {
+    console.error('Error deleting movie:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('movies-search-by-title', (event, searchTerm) => {
+  try {
+    const models = db.getModels();
+    const movies = models.movies.searchByTitle(searchTerm);
+    return { success: true, data: movies };
+  } catch (error) {
+    console.error('Error searching movies by title:', error.message);
+    return { success: false, error: error.message };
+  }
+});
+
 app.on('before-quit', () => {
   db.closeDatabase()
 });
