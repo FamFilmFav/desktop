@@ -8,6 +8,18 @@
   </head>
   <body>
     <div id="root"></div>
-    <script src="../dist/app-home.js"></script>
+    <script>
+      (function() {
+        var script = document.createElement('script');
+        var path;
+        if (location.protocol.indexOf('http') === 0) {
+          path = '/app-home.js';
+        } else {
+          path = '../dist/app-home.js';
+        }
+        script.src = path;
+        document.body.appendChild(script);
+      })();
+    </script>
   </body>
 </html>

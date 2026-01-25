@@ -29,7 +29,13 @@ function createAppWindow() {
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, '../public/index.html'));
+  // If a dev server URL is provided, load it to enable HMR / Fast Refresh.
+  const startUrl = process.env.ELECTRON_START_URL;
+  if (startUrl) {
+    mainWindow.loadURL(startUrl);
+  } else {
+    mainWindow.loadFile(path.join(__dirname, '../public/index.html'));
+  }
   mainWindow.on('closed', handleWindowClosed);
 
   backgroundTaskManager.setNotifyFn(() => {

@@ -7,9 +7,11 @@
   "scripts": {
     "webpack": "webpack --mode development",
     "webpack:watch": "webpack --mode development --watch",
+    "webpack:serve": "webpack serve --config webpack.config.js --mode development --port 8080",
     "webpack:prod": "webpack --mode production",
     "start": "npm run webpack && electron .",
-    "dev": "npm run webpack:watch & electron . --remote-debugging-port=9222",
+    "start:electron:dev": "cross-env ELECTRON_START_URL=http://localhost:8080 electron . --remote-debugging-port=9222",
+    "dev": "concurrently \"npm:webpack:serve\" \"npm:start:electron:dev\"",
     "debug": "npm run webpack && electron . --remote-debugging-port=9223 --inspect=5858",
     "debug:main": "node --inspect=5858 --require ./node_modules/electron/cli.js .",
     "build": "npm run webpack:prod && electron-builder",
@@ -35,7 +37,11 @@
     "style-loader": "^4.0.0",
     "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.3"
+    "webpack-dev-server": "^5.2.3",
+    "react-refresh": "^0.14.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+    "concurrently": "^8.2.0",
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
     "better-sqlite3": "^12.6.2",

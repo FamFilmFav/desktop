@@ -23,8 +23,8 @@ Currently developing in Windows. Also targeting Mac and Linux.
 
 Later work will harden the vibe-coded proof-of-concept into a more stable app:
 
+- ~~Activate Fast Refresh / Hot Reloading~~ ✅
 - Improve code maintainability
-- Activate Fast Refresh / Hot Reloading
 - Support automated testing
 - Invite contributions from the development community
 - Include cross-platform releases
