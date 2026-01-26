@@ -2,7 +2,7 @@
   "debug.node.autoAttach": "on",
   "debug.onTaskErrors": "prompt",
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.formatOnSave": false
   },
   "files.exclude": {
