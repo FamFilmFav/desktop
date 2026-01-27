@@ -100,9 +100,17 @@ function getModels() {
   return models;
 }
 
+function dbStatus() {
+  return {
+    dbInitialized: !!db,
+    dbConnected: !!(db && db.open),
+  };
+}
+
 module.exports = {
   initDatabase,
   initMockDatabase,
   closeDatabase,
-  getModels
+  getModels,
+  dbStatus,
 };

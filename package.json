@@ -19,7 +19,7 @@
     "postinstall": "electron-builder install-app-deps",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest",
-    "test:integration": "playwright test"
+    "test:integration": "cross-env NODE_ENV=test playwright test"
   },
   "keywords": [
     "electron",

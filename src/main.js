@@ -265,6 +265,13 @@ ipcMain.handle('movies-search-by-title', (event, searchTerm) => {
   }
 });
 
+if (process.env.NODE_ENV === 'test') {
+  ipcMain.handle('test:get-db-status', async () => {
+    return db.dbStatus();
+  });
+}
+
 app.on('before-quit', () => {
   db.closeDatabase()
 });
+
