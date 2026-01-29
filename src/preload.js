@@ -33,3 +33,9 @@ contextBridge.exposeInMainWorld('electron', {
     searchByTitle: (searchTerm) => ipcRenderer.invoke('movies-search-by-title', searchTerm)
   }
 });
+
+if (process.env.NODE_ENV === 'test') {
+  contextBridge.exposeInMainWorld('testApi', {
+    getDbStatus: () => ipcRenderer.invoke('test:get-db-status')
+  });
+}

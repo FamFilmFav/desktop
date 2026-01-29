@@ -1,5 +1,3 @@
-const Database = require('better-sqlite3');
-
 // Movies table operations
 class MoviesModel {
   constructor(db) {
@@ -200,8 +198,8 @@ class MoviesModel {
       .replace(/[\u0300-\u036f]/g, '')
 
       // 2. Normalize quotes
-      .replace(/[“”«»„‟]/g, '"')
-      .replace(/[‘’‚‛]/g, "'")
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
 
       // 3. Normalize dashes
       .replace(/[–—―]/g, '-');

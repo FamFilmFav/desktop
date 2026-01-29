@@ -80,6 +80,11 @@ function initDatabase() {
   initModels();
 }
 
+function initMockDatabase(testDb) {
+  db = testDb;
+  initModels();
+}
+
 function closeDatabase() {
   if (db) {
     db.close();
@@ -95,8 +100,17 @@ function getModels() {
   return models;
 }
 
+function dbStatus() {
+  return {
+    dbInitialized: !!db,
+    dbConnected: !!(db && db.open),
+  };
+}
+
 module.exports = {
   initDatabase,
+  initMockDatabase,
   closeDatabase,
-  getModels
+  getModels,
+  dbStatus,
 };
