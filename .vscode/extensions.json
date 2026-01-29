@@ -4,7 +4,6 @@
     "esbenp.prettier-vscode",
     "ms-vscode.js-debug",
     "ms-vscode.chrome-debug",
-    "ms-vscode-remote.remote-ssh",
     "eamodio.gitlens"
   ]
 }
