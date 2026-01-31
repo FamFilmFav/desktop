@@ -7,7 +7,7 @@ const packageJson = require('../package.json');
 // Get platform-specific app data directory
 function getAppDataDir() {
   const appName = packageJson.name;
-  
+
   if (process.platform === 'win32') {
     // Windows: %APPDATA%\FamFilmFav
     return path.join(process.env.APPDATA, appName, 'sqlite');
@@ -29,7 +29,7 @@ function runMigrations() {
   }
 
   const migrationsDir = path.join(__dirname, 'db', 'migrations');
-  
+
   if (!fs.existsSync(migrationsDir)) {
     console.log('No migrations directory found');
     return;
@@ -42,7 +42,7 @@ function runMigrations() {
   for (const file of migrationFiles) {
     const filePath = path.join(migrationsDir, file);
     const sql = fs.readFileSync(filePath, 'utf8');
-    
+
     console.log(`Running migration: ${file}`);
     db.exec(sql);
   }
@@ -54,7 +54,7 @@ function initModels() {
   }
 
   const MoviesModel = require('./db/models/Movies');
-  
+
   models = {
     movies: new MoviesModel(db)
   };
@@ -62,26 +62,30 @@ function initModels() {
 
 function initDatabase() {
   const appDataDir = getAppDataDir();
-  
+
   // Create directory if it doesn't exist
   if (!fs.existsSync(appDataDir)) {
     fs.mkdirSync(appDataDir, { recursive: true });
   }
-  
+
   const dbPath = path.join(appDataDir, 'famfilmfav.db');
-  
+
   // Open or create database
   db = new Database(dbPath);
-  
-  // Run migrations
+
   runMigrations();
-  
-  // Initialize models
   initModels();
 }
 
 function initMockDatabase(testDb) {
-  db = testDb;
+  if (!testDb) {
+    db = new Database(':memory:');
+  }
+  else {
+    db = testDb;
+  }
+
+  runMigrations();
   initModels();
 }
 
@@ -100,7 +104,7 @@ function getModels() {
   return models;
 }
 
-function dbStatus() {
+function getStatus() {
   return {
     dbInitialized: !!db,
     dbConnected: !!(db && db.open),
@@ -112,5 +116,5 @@ module.exports = {
   initMockDatabase,
   closeDatabase,
   getModels,
-  dbStatus,
+  getStatus,
 };

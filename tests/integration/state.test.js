@@ -8,10 +8,10 @@ test('db is connected', async () => {
 
   window.on('console', msg => {
     console.log('[renderer]', msg.text());
-    }); 
+  }); 
 
   const status = await window.evaluate(async () => {
-    return window.testApi.getDbStatus();
+    return await window.testApi.db.getStatus();
   });
 
   expect(status.dbConnected).toBe(true);

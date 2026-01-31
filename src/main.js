@@ -266,9 +266,46 @@ ipcMain.handle('movies-search-by-title', (event, searchTerm) => {
 });
 
 if (process.env.NODE_ENV === 'test') {
+
   ipcMain.handle('test:get-db-status', async () => {
-    return db.dbStatus();
+    return db.getStatus();
   });
+  const {createMockDownloadJsonGzStream, createMockDownloadCsvStream} = require('../tests/integration/background-tasks/import-background-tasks.mocks');
+  const ImportTmdbTask = require('../src/tasks/ImportTmdbTask');
+  const ImportWatchmodeTask = require('../src/tasks/ImportWatchmodeTask');
+
+  // TODO: Turn these callbacks into mocks so they can be tracked
+  global.__testCallbacks = {
+    createTaskContext: () => ({
+      abortSignal: null,
+      reportProgress: (progress) => {}, // No-op for testing
+      isCancelled: () => false
+    })
+  };
+
+  global.__testHooks = {
+    app:{
+      getAppPath: () => app.getAppPath(),
+      isReady: () => app.isReady(),
+    },
+    db: {
+      getStatus: () => db.getStatus(),
+      initMockDatabase: (testDb) => db.initMockDatabase(testDb),
+      closeDatabase: () => db.closeDatabase()
+    },
+    data: {
+      loadStubTmdbData: async (dataSource) => {
+        const tmdbDownloader = createMockDownloadJsonGzStream(dataSource);
+        const tmdbTask = new ImportTmdbTask(tmdbDownloader);
+        await tmdbTask.runTask({}, global.__testCallbacks.createTaskContext());
+      },
+      loadStubWatchmodeData: async (dataSource) => {
+        const watchmodeDownloader = createMockDownloadCsvStream(dataSource);
+        const watchmodeTask = new ImportWatchmodeTask(watchmodeDownloader);
+        await watchmodeTask.runTask({}, global.__testCallbacks.createTaskContext());
+      },
+    },
+  };
 }
 
 app.on('before-quit', () => {

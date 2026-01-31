@@ -8,6 +8,14 @@ const { parse } = require('csv-parse/sync');
 const { getModels } = require('../database');
 
 class ImportWatchmodeTask extends BackgroundTask {
+  // downloader: Optional stream function for testing/mocking.
+  // If provided, it will be used instead of the real downloadCsvStream method.
+  // This allows tests to provide mock data without hitting the real API.
+  constructor(downloader = null) {
+    super();
+    this.downloader = downloader;
+  }
+
   static get label() {
     return 'Import Watchmode Database';
   }
@@ -43,32 +51,54 @@ class ImportWatchmodeTask extends BackgroundTask {
     }
   }
 
-  async downloadCsv(abortSignal) {
+  _getDownloadCsvStream() {
+    return this.downloader || this.downloadCsvStream.bind(this);
+  }
+
+  async downloadCsvStream(abortSignal) {
     return new Promise((resolve, reject) => {
       const url = 'https://api.watchmode.com/datasets/title_id_map.csv';
-      const tempDir = os.tmpdir();
-      const tempFilePath = path.join(tempDir, `watchmode_import_${Date.now()}.csv`);
-      
-      const file = fs.createWriteStream(tempFilePath);
       
       const req = https.get(url, { signal: abortSignal }, (res) => {
-        res.pipe(file);
-        
-        file.on('finish', () => {
-          file.close();
-          resolve(tempFilePath);
-        });
+        resolve(res);
       });
       
       req.on('error', (err) => {
-        fs.unlink(tempFilePath, () => {}); // Delete the file on error
         reject(err);
       });
+    });
+  }
+
+  async downloadCsv(abortSignal) {
+    return new Promise((resolve, reject) => {
+      const tempDir = os.tmpdir();
+      const tempFilePath = path.join(tempDir, `watchmode_import_${Date.now()}.csv`);
       
-      file.on('error', (err) => {
-        fs.unlink(tempFilePath, () => {}); // Delete the file on error
-        reject(err);
-      });
+      this._getDownloadCsvStream()(abortSignal)
+        .then((stream) => {
+          const file = fs.createWriteStream(tempFilePath);
+          
+          stream.pipe(file);
+          
+          file.on('finish', () => {
+            file.close();
+            resolve(tempFilePath);
+          });
+          
+          stream.on('error', (err) => {
+            fs.unlink(tempFilePath, () => {});
+            reject(err);
+          });
+          
+          file.on('error', (err) => {
+            fs.unlink(tempFilePath, () => {});
+            reject(err);
+          });
+        })
+        .catch((err) => {
+          fs.unlink(tempFilePath, () => {});
+          reject(err);
+        });
     });
   }
 

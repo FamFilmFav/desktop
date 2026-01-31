@@ -36,6 +36,8 @@ contextBridge.exposeInMainWorld('electron', {
 
 if (process.env.NODE_ENV === 'test') {
   contextBridge.exposeInMainWorld('testApi', {
-    getDbStatus: () => ipcRenderer.invoke('test:get-db-status')
+    db: {
+      getStatus: () => ipcRenderer.invoke('test:get-db-status')
+    }
   });
 }

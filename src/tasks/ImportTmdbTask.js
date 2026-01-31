@@ -7,6 +7,14 @@ const zlib = require('zlib');
 const { getModels } = require('../database');
 
 class ImportTmdbTask extends BackgroundTask {
+  // downloader: Optional stream function for testing/mocking.
+  // If provided, it will be used instead of the real downloadJsonGzStream method.
+  // This allows tests to provide mock data without hitting the real API.
+  constructor(downloader = null) {
+    super();
+    this.downloader = downloader;
+  }
+
   static get label() {
     return 'Import TMDB Database';
   }
@@ -43,40 +51,64 @@ class ImportTmdbTask extends BackgroundTask {
       console.error('ImportTmdbTask error:', error);
       throw error;
     } finally {
-      // Clean up temp file
-      if (tempFilePath && fs.existsSync(tempFilePath)) {
-        fs.unlinkSync(tempFilePath);
+      // Clean up temp files
+      if (gzFilePath && fs.existsSync(gzFilePath)) {
+        fs.unlinkSync(gzFilePath);
+      }
+      if (jsonFilePath && fs.existsSync(jsonFilePath)) {
+        fs.unlinkSync(jsonFilePath);
       }
     }
   }
 
-  async downloadJsonGz(abortSignal, dateFileSpec) {
-    return new Promise((resolve, reject) => {
+  _getDownloadJsonGzStream() {
+    return this.downloader || this.downloadJsonGzStream.bind(this);
+  }
 
+  async downloadJsonGzStream(abortSignal, dateFileSpec) {
+    return new Promise((resolve, reject) => {
       const url = `https://files.tmdb.org/p/exports/movie_ids_${dateFileSpec}.json.gz`;
-      const tempDir = os.tmpdir();
-      const tempFilePath = path.join(tempDir, `tmdb_import_${dateFileSpec}.json.gz`);
-      
-      const file = fs.createWriteStream(tempFilePath);
       
       const req = https.get(url, { signal: abortSignal }, (res) => {
-        res.pipe(file);
-        
-        file.on('finish', () => {
-          file.close();
-          resolve(tempFilePath);
-        });
+        resolve(res);
       });
       
       req.on('error', (err) => {
-        fs.unlink(tempFilePath, () => {}); // Delete the file on error
         reject(err);
       });
+    });
+  }
+
+  async downloadJsonGz(abortSignal, dateFileSpec) {
+    return new Promise((resolve, reject) => {
+      const tempDir = os.tmpdir();
+      const tempFilePath = path.join(tempDir, `tmdb_import_${dateFileSpec}.json.gz`);
       
-      file.on('error', (err) => {
-        fs.unlink(tempFilePath, () => {}); // Delete the file on error
-        reject(err);
-      });
+      this._getDownloadJsonGzStream()(abortSignal, dateFileSpec)
+        .then((stream) => {
+          const file = fs.createWriteStream(tempFilePath);
+          
+          stream.pipe(file);
+          
+          file.on('finish', () => {
+            file.close();
+            resolve(tempFilePath);
+          });
+          
+          stream.on('error', (err) => {
+            fs.unlink(tempFilePath, () => {});
+            reject(err);
+          });
+          
+          file.on('error', (err) => {
+            fs.unlink(tempFilePath, () => {});
+            reject(err);
+          });
+        })
+        .catch((err) => {
+          fs.unlink(tempFilePath, () => {});
+          reject(err);
+        });
     });
   }
 
