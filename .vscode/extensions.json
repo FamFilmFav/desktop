@@ -4,6 +4,8 @@
     "esbenp.prettier-vscode",
     "ms-vscode.js-debug",
     "ms-vscode.chrome-debug",
-    "eamodio.gitlens"
+    "eamodio.gitlens",
+    "kanumurikrishna.cucumber-test-runner-new",
+    "CucumberOpen.cucumber-official"
   ]
 }

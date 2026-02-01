@@ -24,7 +24,7 @@ export function startServer(app: Express, port: number): ReturnType<Express['lis
   });
 
   const server = app.listen(port, 'localhost', () => {
-    console.log(`Web server listening on http://localhost:${port}`);
+    console.info(`Web server listening on http://localhost:${port}`);
   });
 
   return server;

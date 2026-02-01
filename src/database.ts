@@ -36,7 +36,7 @@ function runMigrations(): void {
   const migrationsDir = path.join(__dirname, 'db', 'migrations');
 
   if (!fs.existsSync(migrationsDir)) {
-    console.log('No migrations directory found');
+    console.error('No migrations directory found');
     return;
   }
 
@@ -45,7 +45,7 @@ function runMigrations(): void {
   for (const file of migrationFiles) {
     const filePath = path.join(migrationsDir, file);
     const sql = fs.readFileSync(filePath, 'utf8');
-    console.log(`Running migration: ${file}`);
+    console.info(`Running migration: ${file}`);
     db.exec(sql);
   }
 }

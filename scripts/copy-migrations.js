@@ -21,4 +21,4 @@ for (const file of files) {
     fs.copyFileSync(path.join(srcMigrations, file), path.join(destMigrations, file));
   }
 }
-console.log('Copied migrations to dist/db/migrations');
+console.info('Copied migrations to dist/db/migrations');

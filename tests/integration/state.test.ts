@@ -10,8 +10,15 @@ test('db is connected', async () => {
     console.log('[renderer]', msg.text());
   });
 
-  const status = await window.evaluate(async () => {
-    return await (window as unknown as { testApi: { db: { getStatus: () => Promise<{ dbConnected: boolean }> } } }).testApi.db.getStatus();
+  const status = await app.evaluate(async ({ app }) => {
+    const appWithTestHooks = app as typeof app & {
+      testHooks?: { db: { getStatus: () => { dbInitialized: boolean; dbConnected: boolean } } };
+    };
+
+    if (!appWithTestHooks.testHooks) {
+      throw new Error('Test hooks not available');
+    }
+    return appWithTestHooks.testHooks.db.getStatus();
   });
 
   expect(status.dbConnected).toBe(true);

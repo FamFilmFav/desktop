@@ -12,17 +12,27 @@ test.beforeAll(async () => {
     console.log('[app]', msg.text());
   });
 
-  await app.evaluate(async () => {
-    const g = global as unknown as { __testHooks: { db: { initMockDatabase: () => void }; data: { loadStubWatchmodeData: (p: string) => Promise<void>; loadStubTmdbData: (p: string) => Promise<void> } } };
-    g.__testHooks.db.initMockDatabase();
-    await g.__testHooks.data.loadStubWatchmodeData('./tests/test-double-data/watchmode/import/title_id_map.csv');
-    await g.__testHooks.data.loadStubTmdbData('./tests/test-double-data/tmdb/import/movie_ids.json');
+  await app.evaluate(async ({ app }) => {
+    const appWithTestHooks = app as typeof app & {
+      testHooks?: {
+        db: { initMockDatabase: () => void }
+        data: { loadStubWatchmodeData: (p: string) => Promise<void>; loadStubTmdbData: (p: string) => Promise<void> }
+      };
+    };
+
+    if (!appWithTestHooks.testHooks) {
+      throw new Error('Test hooks not available');
+    }
+
+    appWithTestHooks.testHooks.db.initMockDatabase();
+    await appWithTestHooks.testHooks.data.loadStubWatchmodeData('./tests/test-double-data/watchmode/import/title_id_map.csv');
+    await appWithTestHooks.testHooks.data.loadStubTmdbData('./tests/test-double-data/tmdb/import/movie_ids.json');  
   });
 });
 
 test('should not throw errors', async () => {
   const info = await app.evaluate(() => {
-    const g = global as unknown as { __testHooks?: { app: { getAppPath: () => string }; db: { getStatus: () => unknown } } };
+    const g = global as unknown as { __testHooks?: { app: { getAppPath: () => string } } };
     return {
       hasProcess: typeof process !== 'undefined',
       hasVersions: typeof (process as NodeJS.Process).versions,
@@ -31,10 +41,8 @@ test('should not throw errors', async () => {
       sandboxed: (process as NodeJS.Process & { sandboxed?: boolean }).sandboxed,
       hasRequire: typeof require,
       appPath: g.__testHooks ? g.__testHooks.app.getAppPath() : 'no testApi',
-      dbStatus: g.__testHooks ? g.__testHooks.db.getStatus() : 'no testApi',
     };
   });
-  console.log(info);
 });
 
 test('should have 23 movies in the database', async () => {
@@ -68,9 +76,20 @@ test('should not have popularity value for Watchmode ID 11083261', async () => {
 });
 
 test.afterAll(async () => {
-  await app.evaluate(async () => {
-    const g = global as unknown as { __testHooks: { db: { closeDatabase: () => void } } };
-    g.__testHooks.db.closeDatabase();
+
+  await app.evaluate(async ({ app }) => {
+    const appWithTestHooks = app as typeof app & {
+      testHooks?: {
+        db: { closeDatabase: () => void }
+      };
+    };
+
+    if (!appWithTestHooks.testHooks) {
+      throw new Error('Test hooks not available');
+    }
+
+    appWithTestHooks.testHooks.db.closeDatabase();
   });
+
   await app.close();
 });

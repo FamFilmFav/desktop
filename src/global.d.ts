@@ -14,9 +14,6 @@ declare global {
       onBackgroundTaskUpdate: (callback: (state: { active: unknown; queue: unknown[] }) => void) => () => void;
       movies: Record<string, (...args: unknown[]) => Promise<unknown>>;
     };
-    testApi?: {
-      db: { getStatus: () => Promise<unknown> };
-    };
   }
 }
 

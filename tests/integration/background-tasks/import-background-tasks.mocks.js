@@ -29,11 +29,11 @@ function createMockDownloadJsonGzStream(dataSource) {
         // Check if dataSource is a file path that exists, or raw content
         if (fs.existsSync(dataSource)) {
           // Treat as file path
-          console.log(dataSource, ' is a file path');
+          console.debug(dataSource, ' is a file path');
           jsonContent = fs.readFileSync(dataSource, 'utf8');
         } else {
           // Treat as raw content
-          console.log(dataSource, ' is raw content');
+          console.debug(dataSource, ' is raw content');
           jsonContent = dataSource;
         }
 

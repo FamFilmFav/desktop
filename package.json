@@ -20,9 +20,10 @@
     "build": "npm run build:main && npm run webpack:prod && electron-builder",
     "pack": "npm run build:main && npm run webpack:prod && electron-builder --dir",
     "postinstall": "electron-builder install-app-deps",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "npm run test:unit && npm run test:integration && npm run test:features",
     "test:unit": "jest",
-    "test:integration": "cross-env NODE_ENV=test playwright test"
+    "test:integration": "cross-env NODE_ENV=test playwright test",
+    "test:features": "cross-env NODE_ENV=test cucumber-js"
   },
   "keywords": [
     "electron",
@@ -36,6 +37,7 @@
     "@babel/preset-env": "^7.28.6",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.24.0",
+    "@cucumber/cucumber": "^12.6.0",
     "@electron/rebuild": "^4.0.2",
     "@playwright/test": "^1.58.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",

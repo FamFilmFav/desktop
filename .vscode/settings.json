@@ -16,8 +16,17 @@
   "playwright.env": {
     "NODE_ENV": "test"
   },
-  "javascript.debugger.resourcePathResolver": "debugging",
-  "electron-debug.debugging": {
-    "enabled": true
+  "cucumber.glue": [
+    "tests/features/step-definitions/**/*.ts",
+    "tests/features/support/**/*.ts"
+  ],
+  "cucumber_runner.features": [
+    "tests/features/**/*.feature"
+  ],
+  "cucumber-test-runner-new.debugEnvironmentVariables": {
+    "PWDEBUG": "1"
+  },
+  "cucumber-test-runner-new.environmentVariables": {
+    "NODE_ENV": "test"
   }
 }

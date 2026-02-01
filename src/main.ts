@@ -5,6 +5,7 @@ import * as server from './server';
 import * as db from './database';
 import SettingsManager from './settings-manager';
 import * as backgroundTaskManager from './background-task-manager';
+import { registerTestHooks, TestHooks } from './test-hooks';
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -131,7 +132,7 @@ ipcMain.handle('load-settings', () => {
 ipcMain.handle('save-settings', async (_event, settings: Record<string, unknown>) => {
   try {
     settingsManager.setAll(settings);
-    console.log('Settings saved:', settings);
+    console.info('Settings saved:', settings);
     return { success: true };
   } catch (error) {
     console.error('Error saving settings:', (error as Error).message);
@@ -236,15 +237,14 @@ ipcMain.handle('movies-search-by-title', (_event, searchTerm: string) => {
   }
 });
 
-if (process.env.NODE_ENV === 'test') {
-  ipcMain.handle('test:get-db-status', async () => db.getStatus());
+const appWithTestHooks = app as typeof app & {
+  testHooks?: TestHooks;
+};
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { createMockDownloadJsonGzStream, createMockDownloadCsvStream } = require('../tests/integration/background-tasks/import-background-tasks.mocks');
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ImportTmdbTask = require('./tasks/ImportTmdbTask').default;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ImportWatchmodeTask = require('./tasks/ImportWatchmodeTask').default;
+if (process.env.NODE_ENV === 'test') {
+  appWithTestHooks.testHooks = registerTestHooks();
+
+  ipcMain.handle('test:get-db-status', async () => db.getStatus());
 
   (global as unknown as { __testCallbacks: { createTaskContext: () => import('./tasks/BackgroundTask').TaskContext } }).__testCallbacks = {
     createTaskContext: () => ({
@@ -252,39 +252,6 @@ if (process.env.NODE_ENV === 'test') {
       reportProgress: () => {},
       isCancelled: () => false
     })
-  };
-
-  (global as unknown as {
-    __testHooks: {
-      app: { getAppPath: () => string; isReady: () => boolean };
-      db: { getStatus: () => unknown; initMockDatabase: (testDb?: unknown) => void; closeDatabase: () => void };
-      data: {
-        loadStubTmdbData: (dataSource: string) => Promise<void>;
-        loadStubWatchmodeData: (dataSource: string) => Promise<void>;
-      };
-    };
-  }).__testHooks = {
-    app: {
-      getAppPath: () => app.getAppPath(),
-      isReady: () => app.isReady()
-    },
-    db: {
-      getStatus: () => db.getStatus(),
-      initMockDatabase: (testDb?: unknown) => db.initMockDatabase(testDb as InstanceType<typeof import('better-sqlite3')> | null),
-      closeDatabase: () => db.closeDatabase()
-    },
-    data: {
-      loadStubTmdbData: async (dataSource: string) => {
-        const tmdbDownloader = createMockDownloadJsonGzStream(dataSource);
-        const tmdbTask = new ImportTmdbTask(tmdbDownloader);
-        await tmdbTask.runTask({}, (global as unknown as { __testCallbacks: { createTaskContext: () => import('./tasks/BackgroundTask').TaskContext } }).__testCallbacks.createTaskContext());
-      },
-      loadStubWatchmodeData: async (dataSource: string) => {
-        const watchmodeDownloader = createMockDownloadCsvStream(dataSource);
-        const watchmodeTask = new ImportWatchmodeTask(watchmodeDownloader);
-        await watchmodeTask.runTask({}, (global as unknown as { __testCallbacks: { createTaskContext: () => import('./tasks/BackgroundTask').TaskContext } }).__testCallbacks.createTaskContext());
-      }
-    }
   };
 }
 

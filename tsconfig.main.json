@@ -8,6 +8,7 @@
   },
   "include": [
     "src/main.ts",
+    "src/test-hooks.ts",
     "src/preload.ts",
     "src/server.ts",
     "src/database.ts",
