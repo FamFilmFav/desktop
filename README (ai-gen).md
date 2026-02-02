@@ -1,4 +1,4 @@
-# FamFilmFav Desktop App
+# FamilyWatchNight Desktop App
 
 A cross-platform Electron app for managing family film favorites with system tray integration, desktop UI, settings window, and web access.
 

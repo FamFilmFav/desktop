@@ -50,7 +50,7 @@ export default function HomePage(): React.ReactElement {
   return (
     <div className="home-page">
       <div className="app-header">
-        <h1>FamFilmFav</h1>
+        <h1>Family Watch Night</h1>
         <div id="headerActions">
           {version && <span className="version">v{version}</span>}
           {port != null && (

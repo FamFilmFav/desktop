@@ -66,7 +66,7 @@ export function initDatabase(): void {
     fs.mkdirSync(appDataDir, { recursive: true });
   }
 
-  const dbPath = path.join(appDataDir, 'famfilmfav.db');
+  const dbPath = path.join(appDataDir, 'FamilyWatchNight.db');
   db = new Database(dbPath);
   runMigrations();
   initModels();

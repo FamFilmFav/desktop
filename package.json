@@ -1,7 +1,7 @@
 {
-  "name": "famfilmfav-desktop",
+  "name": "FamilyWatchNight",
   "version": "1.0.0",
-  "description": "Family Film Favorites Desktop App",
+  "description": "Cross-platform desktop application to bring fun and safety to family movie nights.",
   "main": "dist/main.js",
   "homepage": "./",
   "scripts": {
@@ -73,8 +73,8 @@
     "react-dom": "^19.2.3"
   },
   "build": {
-    "appId": "com.famfilmfav.app",
-    "productName": "FamFilmFav",
+    "appId": "com.familywatchnight.app",
+    "productName": "Family Watch Night",
     "files": [
       "dist/**/*",
       "assets/**/*",

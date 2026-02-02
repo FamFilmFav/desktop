@@ -72,7 +72,7 @@ function createTray(): void {
     }
   ]);
 
-  tray.setToolTip('FamFilmFav');
+  tray.setToolTip('Family Watch Night');
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {

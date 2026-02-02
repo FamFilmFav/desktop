@@ -2,7 +2,7 @@
 
 ## ✅ Completed
 
-Your FamFilmFav desktop application has been successfully refactored to use React components. Here's what was done:
+Your FamilyWatchNight desktop application has been successfully refactored to use React components. Here's what was done:
 
 ### 1. **Installed React Ecosystem**
    - React and ReactDOM
