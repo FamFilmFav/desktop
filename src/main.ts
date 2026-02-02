@@ -12,6 +12,12 @@ let tray: Tray | null = null;
 const webServer = express();
 const settingsManager = new SettingsManager();
 
+if (process.env.NODE_ENV === 'development') {
+  require('electron-reloader')(module, {
+    watchRenderer: false
+  })
+}
+
 function handleWindowClosed(): void {
   mainWindow = null;
 }

@@ -24,7 +24,6 @@
     "test:unit": "jest",
     "test:integration": "cross-env NODE_ENV=test playwright test",
     "test:features": "cross-env NODE_ENV=test cucumber-js",
-
     "electron:vite": "cross-env ELECTRON_START_URL=http://localhost:5173 electron .",
     "renderer:vite": "vite",
     "dev:vite": "concurrently \"npm:build:main:watch\" \"npm:renderer:vite\" \"npm:electron:vite\""
