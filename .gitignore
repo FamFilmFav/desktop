@@ -8,3 +8,5 @@ out/
 .cache/
 .devdbrc
 test-results/
+src/main/app-info.json
+src/main/testing/*.ts

@@ -41,20 +41,6 @@
         "focus": false,
         "panel": "shared"
       }
-    },
-    {
-      "label": "webpack:serve",
-      "type": "shell",
-      "command": "npm",
-      "args": ["run", "webpack:serve"],
-      "isBackground": true,
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      }
     }
   ]
 }

@@ -1,8 +1,8 @@
 {
   "default": {
-    "paths": ["tests/features/**/*.feature"],
+    "paths": ["src/tests/features/**/*.feature"],
     "requireModule": ["ts-node/register/transpile-only"],
-    "require": ["tests/features/step-definitions/**/*.ts", "tests/features/support/**/*.ts"],
+    "require": ["src/tests/features/step-definitions/**/*.ts", "src/tests/features/support/**/*.ts"],
     "format": ["progress-bar", "html:test-results/reports/cucumber-report.html"],
     "timeout": 60000,
     "publishQuiet": true

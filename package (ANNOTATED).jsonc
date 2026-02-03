@@ -5,20 +5,53 @@
   "main": "dist/main/index.js",
   "homepage": "./",
   "scripts": {
+    //
+    // MAIN PROCESS BUILD SCRIPTS
+    //
+    // Default build of the main process using noop implementations for testing
     "build:main": "node scripts/use-testing-noop.js && npm run build:main:raw",
+    // Build the main process using active testing implementations
+    // --
     "build:main:for-integration-testing": "node scripts/use-testing-active.js && npm run build:main:raw",
+    // Raw build of the main process, used by the previous two scripts
     "build:main:raw": "node scripts/copy-migrations.js && node scripts/generate-app-info.js && tsc -p tsconfig.main.json",
+    //
+    // RENDERER PROCESS BUILD SCRIPTS
+    //
+    // Default script for development supports hot reloading with Vite and React Fast Refresh
+    // as well as full debug breakpoint support for Electron's main process and renderer process in the browser.
     "dev:vite": "concurrently \"npm:build:main:watch\" \"npm:renderer:vite\" \"npm:electron:debug\"",
+    // --
+    // Build and the main process (with whatever testing setup is currently active) and restart when files change
     "build:main:watch": "node scripts/copy-migrations.js && node scripts/generate-app-info.js && node scripts/copy-migrations.js && tsc -p tsconfig.main.json --watch",
+    // Build and launch the renderer process and Fast Refresh when files change
     "renderer:vite": "vite",
+    // Launch Electron with both the electron process and the browser process in debug mode with renderer process served from Vite dev server
     "electron:debug": "cross-env ELECTRON_START_URL=http://localhost:5173 electron . --inspect=5858 --remote-debugging-port=9222",
+    //
+    // TESTING SCRIPTS
+    // Run all tests: unit, integration, and Cucumber features -- DOES NOT REBUILD
     "test": "npm run test:unit && npm run test:integration && npm run test:features",
+    // Run only unit tests
     "test:unit": "jest",
+    // Run only integration tests (Playwright) -- REBUILDS MAIN PROCESS WITH ACTIVE TESTING IMPLEMENTATIONS
     "test:integration": "npm run build:main:for-integration-testing && cross-env NODE_ENV=test playwright test",
+    // Run only Cucumber feature tests -- REBUILDS MAIN PROCESS WITH ACTIVE TESTING IMPLEMENTATIONS
     "test:features": "npm run build:main:for-integration-testing && cross-env NODE_ENV=test cucumber-js",
+    //
+    // ELECTRON APP BUILD SCRIPTS
+    //
+    // Full build of the Electron app for distribution (without testing implementations)
     "build": "npm run build:main && npm run build:renderer && electron-builder",
+    // Build the Electron app into a local directory
     "pack": "npm run build:main && npm run build:renderer && electron-builder --dir",
+    // --
+    // Build the renderer process
     "build:renderer": "vite build",
+    //
+    // MISC SCRIPTS
+    //
+    // Install Electron app dependencies after npm install
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [
@@ -29,6 +62,10 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.28.6",
+    "@babel/preset-env": "^7.28.6",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.24.0",
     "@cucumber/cucumber": "^12.6.0",
     "@electron/rebuild": "^4.0.2",
     "@playwright/test": "^1.58.0",
@@ -39,12 +76,16 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.1.3",
+    "babel-loader": "^10.0.0",
     "concurrently": "^8.2.0",
     "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
     "electron": "^40.0.0",
     "electron-builder": "^26.4.0",
     "jest": "^30.2.0",
     "playwright": "^1.58.0",
+    "react-refresh": "^0.14.0",
+    "style-loader": "^4.0.0",
     "ts-jest": "^29.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",

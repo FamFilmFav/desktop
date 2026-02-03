@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const srcMigrations = path.join(__dirname, '..', 'src', 'db', 'migrations');
-const destMigrations = path.join(__dirname, '..', 'dist', 'db', 'migrations');
+const srcMigrations = path.join(__dirname, '..', 'src', 'main', 'db', 'migrations');
+const destMigrations = path.join(__dirname, '..', 'dist', 'main', 'db', 'migrations');
 
 if (!fs.existsSync(srcMigrations)) {
-  console.warn('No src/db/migrations directory found');
+  console.warn('No src/main/db/migrations directory found');
   process.exit(0);
 }
 
@@ -21,4 +21,4 @@ for (const file of files) {
     fs.copyFileSync(path.join(srcMigrations, file), path.join(destMigrations, file));
   }
 }
-console.info('Copied migrations to dist/db/migrations');
+console.info('Copied migrations to dist/main/db/migrations');

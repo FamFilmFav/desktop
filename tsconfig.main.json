@@ -7,21 +7,12 @@
     "jsx": "preserve"
   },
   "include": [
-    "src/main.ts",
-    "src/test-hooks.ts",
-    "src/preload.ts",
-    "src/server.ts",
-    "src/database.ts",
-    "src/settings-manager.ts",
-    "src/background-task-manager.ts",
-    "src/tasks/**/*.ts",
-    "src/db/**/*.ts"
+    "src/main/**/*.ts"
   ],
   "exclude": [
-    "src/index.tsx",
-    "src/AppHome.tsx",
-    "src/AppSettings.tsx",
-    "src/settings.tsx",
-    "src/components/**/*"
+    "src/main/testing-active/**/*",
+    "src/main/testing-noop/**/*",
+    "src/renderer/**/*",
+    "src/tests/**/*"
   ]
 }

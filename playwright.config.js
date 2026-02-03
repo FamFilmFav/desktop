@@ -1,6 +1,6 @@
 const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
-  testDir: 'tests/integration',
+  testDir: 'src/tests/integration',
   testMatch: '**/*.test.ts',
 });
