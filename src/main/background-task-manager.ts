@@ -1,3 +1,11 @@
+/*
+Copyright (c) 2026 Steve Dwire
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 3.
+*/
+
 import { TASK_REGISTRY, type TaskRegistryType } from './tasks/task-registry';
 import type BackgroundTask from './tasks/BackgroundTask';
 import type { ProgressReport, TaskContext } from './tasks/BackgroundTask';

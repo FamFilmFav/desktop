@@ -29,3 +29,11 @@ Later work will harden the vibe-coded proof-of-concept into a more stable app:
 - Invite contributions from the development community
 - Include cross-platform releases
 - Support internationalization & language translation
+
+## License
+
+This project is licensed under the GNU General Public License v3.0.
+
+You are free to use, modify, and distribute this software, including for
+commercial purposes, provided that any distributed modifications are also
+licensed under GPLv3 and the source code is made available.
