@@ -19,6 +19,8 @@ import React, {
   useState,
 } from 'react';
 
+import { scrollElementIntoView } from './useNavigationFocusable';
+
 export type NavigationMode = 'mouse' | 'tab' | 'arrow';
 
 interface RegisteredFocusable {
@@ -222,6 +224,7 @@ export function NavigationProvider({ children }: { children: ReactNode }): React
       requestAnimationFrame(() => {
         if (element.isConnected) {
           element.focus({ preventScroll: true });
+          scrollElementIntoView(element);
         }
       });
     }
@@ -316,7 +319,8 @@ export function NavigationProvider({ children }: { children: ReactNode }): React
           if (nextElement && nextElement !== focusedElement) {
             event.preventDefault();
             setTimeout(() => {
-              nextElement.focus();
+              nextElement.focus({ preventScroll: true });
+              scrollElementIntoView(nextElement);
             }, 1);
           }
         }
@@ -344,6 +348,7 @@ export function NavigationProvider({ children }: { children: ReactNode }): React
           entry.onActivate(event);
           if (element !== document.activeElement) {
             element.focus({ preventScroll: true });
+            scrollElementIntoView(element);
           }
         }
       }

@@ -11,6 +11,12 @@ import {
 
 import { useOptionalNavigation } from './NavigationContext';
 
+export function scrollElementIntoView(element: HTMLElement): void {
+  element.style.scrollMarginTop = '100px';
+  element.style.scrollMarginBottom = '1rem';
+  element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+
 export interface NavigationFocusableOptions<T extends HTMLElement = HTMLElement> {
   onActivate?: (event: KeyboardEvent) => void;
   focusable?: boolean;
@@ -74,6 +80,20 @@ export function useNavigationFocusable<T extends HTMLElement = HTMLElement>(
 
     return navigation.registerFocusable({ focusKey, element, onActivate });
   }, [navigation, focusKey, element, onActivate]);
+
+  useEffect(() => {
+    if (!focused || !element) {
+      return undefined;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      if (element.isConnected) {
+        scrollElementIntoView(element);
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [element, focused]);
 
   return {
     ref: mergedRef,
