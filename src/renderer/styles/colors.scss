@@ -66,6 +66,12 @@ $core-coral: hsl($hue-coral, $saturation-core, $lightness-core);
   );
 }
 
+@mixin make-navigation-palette($base-color) {
+  --navigation-base-color: #{$base-color};
+  --navigation-background-color: #{color.change($base-color, $alpha: 0.2)};
+  --navigation-highlight-color: #{make-highlight-color($base-color)};
+}
+
 $max-background: black;
 $max-foreground: white;
 $background-color: #000000cc;
@@ -97,6 +103,8 @@ $shadow-color-base: black;
 $shadow-opacity: 0.5;
 $shadow-color: rgba($shadow-color-base, $shadow-opacity);
 
+$navigation-base-color: $core-cyan;
+
 :root {
   /* Core Brand Colors */
   --core-red: #{$core-red};
@@ -124,4 +132,6 @@ $shadow-color: rgba($shadow-color-base, $shadow-opacity);
   --gradient-purple: #{make-gradient($core-purple)};
   --gradient-magenta: #{make-gradient($core-magenta)};
   --gradient-coral: #{make-gradient($core-coral)};
+
+  @include make-navigation-palette($navigation-base-color);
 }

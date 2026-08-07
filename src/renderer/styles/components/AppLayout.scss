@@ -7,10 +7,24 @@ the Free Software Foundation, version 3.
 */
 
 @use '../colors';
+@use '../mixins';
 @use 'sass:color';
 
 :root {
   --app-header-height: 64px;
+}
+
+.svg-filter-effects-provider {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+.svg-filter-effects-provider.svg-filter-effects-active {
+  display: inline;
 }
 
 /* Layout Styles */
@@ -62,6 +76,8 @@ the Free Software Foundation, version 3.
   transition: background-color 0.2s ease;
   color: #e0e0e0;
   padding: 0;
+
+  @include mixins.make-focusable;
 }
 
 .hamburger-button:hover {
@@ -103,7 +119,7 @@ the Free Software Foundation, version 3.
 /* Side Menu */
 .side-menu {
   position: fixed;
-  top: 0;
+  top: var(--app-header-height);
   left: 0;
   height: 100vh;
   width: 290px;
@@ -126,7 +142,6 @@ the Free Software Foundation, version 3.
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-top: var(--app-header-height); /* Space for hamburger button */
 }
 
 /* Navigation Section (Scrollable) */

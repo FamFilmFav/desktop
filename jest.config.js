@@ -10,8 +10,10 @@ module.exports = {
   testMatch: ['<rootDir>/tests/unit/**/*.test.ts', '<rootDir>/tests/unit/**/*.test.tsx'],
   testEnvironment: 'node',
   preset: 'ts-jest',
+  // Transform TypeScript and JavaScript files with ts-jest so ESM packages
+  // like `lodash-es` can be transpiled for the Jest runtime.
   transform: {
-    '^.+\\.tsx?$': [
+    '^.+\\.(ts|tsx|js|jsx)$': [
       'ts-jest',
       {
         tsconfig: 'tsconfig.json',
@@ -21,6 +23,9 @@ module.exports = {
       },
     ],
   },
+  // By default Jest ignores node_modules. We need to transform `lodash-es`
+  // (and other ESM-only packages) — exclude it from the ignore list.
+  transformIgnorePatterns: ['node_modules/(?!(lodash-es)/)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!tests/**/*', '!src/**/*.d.ts'],
   setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],

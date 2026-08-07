@@ -412,38 +412,36 @@ export default function FormControlsTestPage(): React.ReactElement {
               buttonTestId="uncontrolled-get-values-button"
               outputTestId="uncontrolled-values-json"
             />
-            <div style={{ marginTop: 8 }}>
-              <textarea
-                data-testid="uncontrolled-initial-values-textarea"
-                aria-label="Uncontrolled initial values"
-                style={{ width: '100%', minHeight: 120 }}
-                defaultValue={
-                  uncontrolledInitialValues
-                    ? JSON.stringify(uncontrolledInitialValues, null, 2)
-                    : ''
-                }
-                onChange={() => {
-                  /* keep textarea uncontrolled for playwright interactions */
-                }}
-              />
-              <div style={{ marginTop: 6 }}>
-                <Button
-                  size="small"
-                  type="button"
-                  data-testid="uncontrolled-set-initial-values-button"
-                  onClick={() => {
-                    const ta = document.querySelector(
-                      '[data-testid="uncontrolled-initial-values-textarea"]',
-                    ) as HTMLTextAreaElement | null;
-                    if (!ta) return;
-                    applyInitialValuesFromText(ta.value);
-                  }}
-                >
-                  Set Form Values
-                </Button>
-              </div>
-            </div>
           </Form>
+          <div style={{ marginTop: 8 }}>
+            <textarea
+              data-testid="uncontrolled-initial-values-textarea"
+              aria-label="Uncontrolled initial values"
+              style={{ width: '100%', minHeight: 120 }}
+              defaultValue={
+                uncontrolledInitialValues ? JSON.stringify(uncontrolledInitialValues, null, 2) : ''
+              }
+              onChange={() => {
+                /* keep textarea uncontrolled for playwright interactions */
+              }}
+            />
+            <div style={{ marginTop: 6 }}>
+              <Button
+                size="small"
+                type="button"
+                data-testid="uncontrolled-set-initial-values-button"
+                onClick={() => {
+                  const ta = document.querySelector(
+                    '[data-testid="uncontrolled-initial-values-textarea"]',
+                  ) as HTMLTextAreaElement | null;
+                  if (!ta) return;
+                  applyInitialValuesFromText(ta.value);
+                }}
+              >
+                Set Form Values
+              </Button>
+            </div>
+          </div>
         </Section>
       </Page>
       <Section title="Test Controls">

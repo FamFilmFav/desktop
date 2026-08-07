@@ -6,6 +6,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3.
 */
 
+import { FocusContext, useFocusable } from '@noriginmedia/norigin-spatial-navigation-react';
 import React, { createContext, useCallback, useMemo, useRef } from 'react';
 
 export interface FormRegistryMeta {
@@ -328,6 +329,22 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
       ],
     );
 
+    const { ref: focusableRef, focusKey: childrenFocusKey } = useFocusable({ focusable: isReady });
+    const formRef = React.useCallback(
+      (el: HTMLFormElement | null) => {
+        if (typeof ref === 'function') {
+          ref(el);
+        } else if (ref && typeof ref === 'object') {
+          (ref as React.MutableRefObject<HTMLFormElement | null>).current = el;
+        }
+
+        if (focusableRef && typeof focusableRef === 'object') {
+          focusableRef.current = el;
+        }
+      },
+      [ref, focusableRef],
+    );
+
     React.useEffect(() => {
       if (formContextRef && 'current' in formContextRef) {
         // Cast to mutable for assignment since callers typically pass the
@@ -343,11 +360,13 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
     }, [contextValue, formContextRef]);
 
     return (
-      <FormContext.Provider value={contextValue}>
-        <form ref={ref} className={className} data-testid={testId} {...rest}>
-          {children}
-        </form>
-      </FormContext.Provider>
+      <FocusContext.Provider value={childrenFocusKey}>
+        <FormContext.Provider value={contextValue}>
+          <form inert={!isReady} ref={formRef} className={className} data-testid={testId} {...rest}>
+            {children}
+          </form>
+        </FormContext.Provider>
+      </FocusContext.Provider>
     );
   },
 );

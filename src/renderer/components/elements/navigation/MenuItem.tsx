@@ -10,6 +10,7 @@ import type { ButtonHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import React from 'react';
 
 import { useOptionalNavigation } from '../../../contexts/NavigationContext';
+import { useNavigationFocusable } from '../../../contexts/useNavigationFocusable';
 
 export interface MenuItemProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -39,6 +40,12 @@ export function MenuItem({
   disabled,
   ...rest
 }: MenuItemProps): React.ReactElement {
+  const { ref, focused, focusSelf, domRef } = useNavigationFocusable<HTMLButtonElement>({
+    onActivate: () => {
+      if (disabled) return;
+      domRef.current?.click();
+    },
+  });
   const navigation = useOptionalNavigation();
   const currentPage = pageId && navigation ? navigation.currentPage : undefined;
   const derivedActive = pageId ? currentPage === pageId : false;
@@ -57,10 +64,14 @@ export function MenuItem({
     onClick?.(event);
   };
 
-  const classes = ['menu-item', active ? 'active' : '', className].filter(Boolean).join(' ');
+  const classes = ['menu-item', active ? 'active' : '', focused && 'has-nav-focus', className]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <button
+      ref={ref}
+      onFocus={focusSelf}
       type={type}
       className={classes}
       aria-current={active ? 'page' : undefined}

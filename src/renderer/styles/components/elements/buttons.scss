@@ -7,6 +7,7 @@ the Free Software Foundation, version 3.
 */
 
 @use '../../colors';
+@use '../../mixins';
 @use '../../typography';
 @use '../../variables';
 @use 'sass:color';
@@ -47,6 +48,8 @@ the Free Software Foundation, version 3.
   text-decoration: none;
 
   @include make-button-color(colors.$primary-color);
+
+  @include mixins.make-focusable;
 
   &:disabled {
     opacity: 0.55;

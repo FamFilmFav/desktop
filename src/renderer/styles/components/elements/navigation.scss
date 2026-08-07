@@ -10,6 +10,7 @@ the Free Software Foundation, version 3.
 */
 
 @use '../../colors';
+@use '../../mixins';
 @use 'sass:color';
 
 .menu-item {
@@ -36,9 +37,9 @@ the Free Software Foundation, version 3.
   }
 
   &.active {
-    background: color.change(colors.$core-blue, $alpha: 0.2);
-    color: colors.make-highlight-color(colors.$core-blue);
-    border-left: 0.25rem solid colors.$core-blue;
+    background: var(--navigation-background-color);
+    color: var(--navigation-highlight-color);
+    border-left: 0.25rem solid var(--navigation-base-color);
     padding-left: 0.75rem;
 
     &:hover {
@@ -46,13 +47,15 @@ the Free Software Foundation, version 3.
     }
 
     & .menu-icon {
-      color: colors.make-highlight-color(colors.$core-blue);
+      color: var(--navigation-highlight-color);
 
       &:hover {
         color: colors.$max-foreground;
       }
     }
   }
+
+  @include mixins.make-focusable($gap: calc(var(--element-padding) * -0.25));
 }
 
 .menu-item__icon {
@@ -105,6 +108,7 @@ the Free Software Foundation, version 3.
     background 0.2s ease,
     color 0.2s ease,
     transform 0.2s ease;
+  @include mixins.make-focusable($gap: calc(var(--element-padding) * -0.25));
 }
 
 .expandable-menu-section__header:hover {

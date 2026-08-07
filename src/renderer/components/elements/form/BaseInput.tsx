@@ -5,9 +5,10 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3.
 */
-
 import log from 'electron-log/renderer';
 import React, { forwardRef, useContext, useEffect } from 'react';
+
+import { useNavigationFocusable } from '../../../contexts/useNavigationFocusable';
 
 import { GroupContext } from './GroupContext';
 import { useFormField } from './useFormField';
@@ -38,7 +39,7 @@ import { useFormField } from './useFormField';
   - Support uncontrolled inputs initialization:
     - React's `defaultValue`/`defaultChecked` only take effect at mount.
       When `initialValues` are supplied after mount (e.g., dynamic
-      initialValues from a test harness), BaseInput performs an
+      `initialValues` from a test harness), BaseInput performs an
       imperative DOM update to set `value`/`checked` so the uncontrolled
       input reflects the intended initial state.
 
@@ -46,6 +47,9 @@ import { useFormField } from './useFormField';
   - `internalRef` is used to keep a stable ref to the DOM element. This
     ref is registered with the `Form` registry via `register()` so higher
     level functions like `reset()` can access and update the DOM.
+  - `useFocusable()` is used internally so BaseInput itself becomes a
+    Norigin spatial-navigation target without requiring callers to pass
+    Norigin's ref.
   - Side-effects that update the DOM only run when `isReady` is true and
     an `initialValue` is present. This mirrors the `Form`'s contract that
     initial values should be applied when the form signals readiness.
@@ -83,8 +87,19 @@ const BaseInputImpl = (
     required,
     ...rest
   }: BaseInputProps,
-  ref: React.ForwardedRef<HTMLInputElement>,
+  forwardedRef: React.ForwardedRef<HTMLInputElement>,
 ) => {
+  const {
+    ref: focusableRefRaw,
+    focused,
+    focusSelf,
+    domRef,
+  } = useNavigationFocusable<HTMLInputElement>({
+    onActivate: () => {
+      domRef.current?.click();
+    },
+  });
+  const focusableRef = focusableRefRaw as React.ForwardedRef<HTMLInputElement>;
   const { type: _type, ...restWithoutType } = rest as Record<string, unknown>;
   void _type;
   const ariaFromRest = (restWithoutType as Record<string, unknown>)['aria-label'] as
@@ -154,12 +169,41 @@ const BaseInputImpl = (
     return undefined;
   }, [nativeType, inputId, group]);
 
+  const classes = [focused && 'has-nav-focus', className].filter(Boolean).join(' ');
+
+  // Manage an internal ref so we can imperatively update uncontrolled inputs.
+  const internalRef = React.useRef<HTMLInputElement | null>(null);
+  const setRefs = React.useCallback(
+    (el: HTMLInputElement | null) => {
+      internalRef.current = el;
+
+      const assignRef = (
+        target: React.ForwardedRef<HTMLInputElement>,
+        value: HTMLInputElement | null,
+        name: string,
+      ) => {
+        if (typeof target === 'function') {
+          try {
+            target(value);
+          } catch {
+            log.warn(`BaseInput: failed to assign ${name} via function, ignoring.`, { inputId });
+          }
+        } else if (target && typeof target === 'object') {
+          (target as React.MutableRefObject<HTMLInputElement | null>).current = value;
+        }
+      };
+
+      assignRef(forwardedRef, el, 'forwarded ref');
+      assignRef(focusableRef, el, 'spatial navigation ref');
+    },
+    [forwardedRef, focusableRef, inputId],
+  );
+
   // Compute element props while allowing explicit props to win
   const implicitProps: Record<string, unknown> = {
     id: inputId,
-    className,
     'data-testid': testId,
-    ref,
+    ref: setRefs,
     'aria-label': ariaLabel,
     type: nativeType,
     inputMode,
@@ -204,27 +248,13 @@ const BaseInputImpl = (
     // No explicit value/default and no initialValue: leave implicitProps without default value.
   }
 
-  // Manage an internal ref so we can imperatively update uncontrolled inputs
-  const internalRef = React.useRef<HTMLInputElement | null>(null);
-  const setRefs = (el: HTMLInputElement | null) => {
-    internalRef.current = el;
-    if (typeof ref === 'function') {
-      try {
-        ref(el);
-      } catch {
-        /* don't let a broken custom component make the whole form crash. */
-        log.warn('BaseInput: failed to assign ref via function, ignoring.', { inputId });
-      }
-    } else if (ref && typeof ref === 'object') {
-      (ref as React.MutableRefObject<HTMLInputElement | null>).current = el;
-    }
-  };
-
   const inputElement = (
     <input
       {...(implicitProps as React.InputHTMLAttributes<HTMLInputElement>)}
       {...(restWithoutType as React.InputHTMLAttributes<HTMLInputElement>)}
+      className={classes}
       ref={setRefs}
+      onFocus={focusSelf}
     />
   );
 
@@ -259,7 +289,7 @@ const BaseInputImpl = (
     } catch {
       // ignore DOM assignment errors
     }
-  }, [initialValue, nativeType, hasExplicitValue, hasExplicitChecked]);
+  }, [initialValue, nativeType, hasExplicitValue, hasExplicitChecked, restWithoutType]);
 
   if (!label || !labelVisible) {
     return inputElement;
@@ -267,7 +297,7 @@ const BaseInputImpl = (
 
   if (labelFirst) {
     return (
-      <label className={className} htmlFor={inputId}>
+      <label htmlFor={inputId}>
         <span>{label}</span>
         {inputElement}
       </label>
@@ -275,7 +305,7 @@ const BaseInputImpl = (
   }
 
   return (
-    <label className={className} htmlFor={inputId}>
+    <label htmlFor={inputId}>
       {inputElement}
       <span>{label}</span>
     </label>
