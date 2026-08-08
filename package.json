@@ -42,7 +42,7 @@
   "author": "",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "@cucumber/cucumber": "^13.0.0",
+    "@cucumber/cucumber": "^13.2.1",
     "@eslint-react/eslint-plugin": "^5.14.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.0",
