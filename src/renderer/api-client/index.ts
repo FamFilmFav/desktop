@@ -24,5 +24,5 @@ export function createApiClient(): ApiClient {
   return createHttpApiClient();
 }
 
-export * from './types';
 export * from './http';
+export * from './types';

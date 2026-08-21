@@ -106,7 +106,7 @@ export class UserService {
       throw new AuthenticationError(this.t('errors.cannotBootstrapAdmin'));
     }
 
-    const username = data.username.trim();
+    const username = typeof data?.username === 'string' ? data.username.trim() : '';
     if (!username) {
       throw new Error(this.t('errors.usernameRequired'));
     }

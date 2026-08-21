@@ -11,14 +11,16 @@ import { Express } from 'express';
 import { registerAppRoutes } from './app';
 import { registerBackgroundTaskRoutes } from './background-tasks';
 import { registerMovieRoutes } from './movies';
-import { initializeWebSocketServer, broadcast } from './notifications';
+import { broadcast, initializeWebSocketServer } from './notifications';
 import { registerSettingsRoutes } from './settings';
+import { registerUserRoutes } from './users';
 
-export { initializeWebSocketServer, broadcast };
+export { broadcast, initializeWebSocketServer };
 
 export function registerHttpRoutes(app: Express): void {
   registerAppRoutes(app);
   registerBackgroundTaskRoutes(app);
   registerMovieRoutes(app);
   registerSettingsRoutes(app);
+  registerUserRoutes(app);
 }

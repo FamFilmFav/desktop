@@ -14,6 +14,7 @@ import { HttpAppApi } from './app';
 import { HttpBackgroundTaskApi } from './background-tasks';
 import { HttpMovieApi } from './movies';
 import { HttpSettingsApi } from './settings';
+import { HttpUserApi } from './users';
 
 class HttpApiClient implements ApiClient {
   private eventListeners: Map<string, Set<(data: unknown) => void>> = new Map();
@@ -23,6 +24,7 @@ class HttpApiClient implements ApiClient {
   backgroundTasks = new HttpBackgroundTaskApi(this);
   movies = new HttpMovieApi();
   settings = new HttpSettingsApi();
+  users = new HttpUserApi();
 
   on(eventType: string, callback: (data: unknown) => void): void {
     if (!this.eventListeners.has(eventType)) {

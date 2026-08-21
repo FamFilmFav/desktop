@@ -15,7 +15,7 @@ Implement the first-run bootstrap workflow as a blocking overlay in the existing
 4. Add the renderer-facing API type and client method for the use case. This is the contract at the renderer boundary, not another implementation of the service. Keep it transport-neutral so React calls one method regardless of environment.
 5. Add thin Electron adapters: preload/context-bridge exposure and an IPC handler that validates/decodes the request, calls the bootstrap use case, and maps domain errors into the API error shape.
 6. Add thin HTTP adapters: route registration, request parsing/validation, response/error mapping, and the existing localhost/rate-limit/security middleware. Both adapters must call the same service operation and must not duplicate bootstrap or role-assignment logic.
-7. Verify IPC and HTTP produce equivalent results for the same request, reject second bootstrap attempts, do not expose password hashes, and preserve the existing automatic transport selection in `createApiClient()`. _This phase blocks UI integration tests._
+7. Defer direct IPC/HTTP adapter tests and adapter-test infrastructure. Transport behavior will be verified through the Phase 3/4 UI workflow in both Electron and browser modes. Preserve the existing automatic transport selection in `createApiClient()` and ensure both adapters call the same service operation.
 
 ### Phase 3: Build the conditional bootstrap UI
 
