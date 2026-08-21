@@ -13,15 +13,15 @@ import { PERMISSION_STUBS, type PermissionStub } from '../auth/permissions';
 import * as backgroundTaskManager from '../background-task-manager';
 import * as db from '../database';
 import {
-  MovieService,
-  SettingsService,
   BackgroundTaskService,
-  UserService,
+  MovieService,
   RoleService,
+  SettingsService,
+  UserService,
 } from '../services';
 import {
-  initialize as initializeSettingsManager,
   getStatus as getSettingsStatus,
+  initialize as initializeSettingsManager,
 } from '../settings-manager';
 import ImportTmdbTask from '../tasks/ImportTmdbTask';
 import ImportWatchmodeTask from '../tasks/ImportWatchmodeTask';
@@ -34,14 +34,14 @@ import { MockBackgroundTask } from './support/mocks/background-task.mocks';
 import { createMockElectronStore } from './support/mocks/electron-store.mocks';
 import {
   clearRecordedEvents,
-  recordEvent,
-  getRecordedEvents,
-  findEventByType,
   filterEventsByType,
+  findEventByType,
+  getRecordedEvents,
+  recordEvent,
 } from './support/mocks/event-notification.mocks';
 import {
-  createMockDownloadJsonGzStream,
   createMockDownloadCsvStream,
+  createMockDownloadJsonGzStream,
 } from './support/mocks/import-background-tasks.mocks';
 
 const movieService = new MovieService();
@@ -206,6 +206,10 @@ export interface TestHooks {
     completeTask: () => void;
   };
   users: {
+    hasUsers: () => Promise<boolean>;
+    createFirstAdmin: (
+      data: import('../services/UserService').FirstAdminUserData,
+    ) => Promise<import('../db/models/Users').User>;
     createTestUser: (
       data: { username: string; email?: string; password?: string },
       authContext?: AuthContextPayload,
@@ -502,6 +506,9 @@ export function getTestHooks(): TestHooks {
       },
     },
     users: {
+      hasUsers: async () => executeServiceMethod(() => Promise.resolve(userService.hasUsers())),
+      createFirstAdmin: async (data) =>
+        executeServiceMethod(() => userService.createFirstAdmin(data)),
       createTestUser: async (data, authContext) => {
         const ctx = authContext
           ? createAuthContext(authContext.userId, authContext.permissions)

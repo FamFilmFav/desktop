@@ -42,6 +42,7 @@ export default class UsersModel {
   private getByUsernameStmt!: Database.Statement;
   private updatePasswordStmt!: Database.Statement;
   private updateLastLoginStmt!: Database.Statement;
+  private deleteStmt!: Database.Statement;
 
   constructor(db: Database.Database) {
     this.db = db;
@@ -64,6 +65,8 @@ export default class UsersModel {
     this.updateLastLoginStmt = this.db.prepare(`
       UPDATE users SET last_login_at = ?, updated_at = ? WHERE id = ?
     `);
+
+    this.deleteStmt = this.db.prepare('DELETE FROM users WHERE id = ?');
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -112,6 +115,10 @@ export default class UsersModel {
   updateLastLogin(id: number): void {
     const now = new Date().toISOString();
     this.updateLastLoginStmt.run(now, now, id);
+  }
+
+  delete(id: number): void {
+    this.deleteStmt.run(id);
   }
 
   formatUser(row: UserRow): User {

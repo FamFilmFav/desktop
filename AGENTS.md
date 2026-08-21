@@ -165,13 +165,11 @@ Each service is pure business logic, completely decoupled from transport (IPC or
 The same service instances are exposed through TWO transports:
 
 - **HTTP** (via Express): Exposed on a configurable port (in settings), localhost-only with rate-limiting (100 req/min)
-  - Intended for browser access (when complete)
+  - Used when accessing the app through a browser window
 - **IPC** (Electron): For native app communication between main and renderer processes
   - Used when accessing the app through the Electron window
 
 The renderer's API client automatically detects its environment and selects the appropriate transport. This means the same React components are designed to work seamlessly whether launched in Electron or in a browser.
-
-**Note**: The HTTP-based UI is not yet functional. For testing, use Cucumber feature tests and Jest unit tests.
 
 ## Database
 
