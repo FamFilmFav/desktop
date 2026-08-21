@@ -19,6 +19,7 @@ import * as testing from '../testing';
 
 import { HomeIcon, SettingsIcon, TasksIcon } from './elements/icons';
 import { ExpandableMenuSection, MenuItem } from './elements/navigation';
+import FirstAdminUserOverlay from './FirstAdminUserOverlay';
 import pageRegistry from './pageRegistry';
 import BackgroundTasksPage from './pages/BackgroundTasksPage';
 import HomePage from './pages/HomePage';
@@ -47,6 +48,7 @@ export default function Layout(): React.ReactElement {
   const [systemExpanded, setSystemExpanded] = useState(false);
   const [activeTask, setActiveTask] = useState<TaskPayload | null>(null);
   const [queue, setQueue] = useState<TaskPayload[]>([]);
+  const [hasUsers, setHasUsers] = useState<boolean | null>(null);
 
   const toggleMenu = (): void => setMenuOpen(!menuOpen);
   const closeMenu = (): void => setMenuOpen(false);
@@ -74,6 +76,13 @@ export default function Layout(): React.ReactElement {
     focusable: !menuOpen,
     trackChildren: true,
   });
+
+  useEffect(() => {
+    void apiClient.users
+      .hasUsers()
+      .then(setHasUsers)
+      .catch(() => setHasUsers(true));
+  }, []);
 
   useEffect(() => {
     if (menuOpen) {
@@ -159,7 +168,7 @@ export default function Layout(): React.ReactElement {
         </defs>
       </svg>
       <div ref={appRef} className="app-layout" data-testid="app-layout">
-        <header className="app-header" data-testid="app-header">
+        <header inert={hasUsers === false} className="app-header" data-testid="app-header">
           <button
             ref={menuButtonRef}
             className={'hamburger-button' + (menuButtonFocused ? ' has-nav-focus' : '')}
@@ -182,7 +191,11 @@ export default function Layout(): React.ReactElement {
           <div className="menu-overlay" data-testid="menu-overlay" onClick={closeMenu}></div>
         )}
         <FocusContext.Provider value={menuFocusKey}>
-          <div className={`side-menu ${menuOpen ? 'open' : ''}`} data-testid="side-menu">
+          <div
+            inert={hasUsers === false}
+            className={`side-menu ${menuOpen ? 'open' : ''}`}
+            data-testid="side-menu"
+          >
             <nav inert={!menuOpen} className="menu-nav">
               <div ref={menuRef} className="menu-content">
                 <div className="menu-nav-section">
@@ -231,10 +244,16 @@ export default function Layout(): React.ReactElement {
           </div>
         </FocusContext.Provider>
         <FocusContext.Provider value={contentFocusKey}>
-          <div ref={contentRef} className="main-content" data-testid="main-content">
+          <div
+            inert={hasUsers === false}
+            ref={contentRef}
+            className="main-content"
+            data-testid="main-content"
+          >
             {renderPage()}
           </div>
         </FocusContext.Provider>
+        {hasUsers === false && <FirstAdminUserOverlay onCreated={() => setHasUsers(true)} />}
       </div>
     </FocusContext.Provider>
   );

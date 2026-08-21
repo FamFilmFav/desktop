@@ -13,7 +13,8 @@ Feature: Basic UI Infrastructure
 
   @smoke
   Scenario: User can navigate to Settings page
-    Given I open the app window as an unauthenticated user
+    Given a user exists with username "hide-bootstrap-panel" and no password
+    And I open the app window as an unauthenticated user
     When the user navigates to the Settings page
     Then the Settings page is visible
 

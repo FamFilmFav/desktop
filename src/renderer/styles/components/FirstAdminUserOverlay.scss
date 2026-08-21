@@ -1,0 +1,25 @@
+@use '../colors';
+
+.first-admin-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.instructions {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .first-admin-overlay {
+    align-items: flex-start;
+    padding: 16px;
+  }
+}

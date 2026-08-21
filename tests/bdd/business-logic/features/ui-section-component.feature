@@ -12,7 +12,8 @@ Feature: Section component testing
   So that Section title and styling are validated by BDD tests
 
   Scenario: Section component displays dynamic title and class name
-    Given the Page Framework test page is open for testing
+    Given a user exists with username "hide-bootstrap-panel" and no password
+    And the Page Framework test page is open for testing
     And the section title is set to "Section Alpha"
     And the section class name is set to "custom-section-class"
     Then the Section component should display the title "Section Alpha"
