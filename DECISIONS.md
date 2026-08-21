@@ -60,7 +60,7 @@ This document records significant architectural and implementation decisions for
 ## 3. Dual Transport Pattern: HTTP + IPC Expose Same Services
 
 **Date**: March 2026  
-**Status**: Planned (HTTP UI not yet functional)
+**Status**: Active
 
 **Decision**: Core services are exposed through BOTH HTTP (Express) and IPC (Electron) transports, enabling the same React components to run in Electron or browser.
 
@@ -72,13 +72,10 @@ This document records significant architectural and implementation decisions for
 
 **Current State**:
 
-- HTTP server started but UI is not yet functional
-- IPC + Electron is the primary working transport
-- **Do NOT assume HTTP transport is ready for testing**
+- HTTP UI routes were completed with PR [#76](https://github.com/FamilyWatchNight/desktop/pull/76)
 
 **Future Work**:
 
-- Complete HTTP-based UI implementation
 - Multi-user access from local network
 
 **Notes**:
@@ -88,7 +85,35 @@ This document records significant architectural and implementation decisions for
 
 ---
 
-## 4. Security-First Architecture with Defense-in-Depth
+## 4. New Displayable Errors Must Use Complete Locale Keys
+
+**Date**: August 2026
+**Status**: Active
+
+**Decision**: New code must represent every potentially displayable error or message with an i18next translation key. Service code must call `this.t('namespace.key')` without inline fallback text, and matching English and Dev locale entries must be added in the same change.
+
+**Rationale**:
+
+- Prevents hardcoded English from bypassing localization.
+- Keeps English and Dev locale files complete and reviewable.
+- Makes missing translations visible through the existing i18n instrumentation.
+- Avoids coupling production logic to fallback copy that belongs in locale files.
+
+**Scope**:
+
+- Errors that remain strictly internal and are never returned across a service or transport boundary may use technical logging details.
+- Any error that can reach a user, API client, or UI must use a localized key or be converted into a localized boundary error.
+- Existing fallback strings may be migrated incrementally; all new code follows this rule.
+
+**Implementation**:
+
+- Add keys to both `assets/locales/en/{namespace}.json` and `assets/locales/dev/{namespace}.json`.
+- Use `this.t('errors.someKey')`, never `this.t('errors.someKey', 'English fallback')` or a raw user-facing string.
+- Use a dedicated key when an invariant/configuration error has a different meaning from a general domain error.
+
+---
+
+## 5. Security-First Architecture with Defense-in-Depth
 
 **Date**: March 2026  
 **Status**: Active

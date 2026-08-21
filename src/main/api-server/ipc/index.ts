@@ -13,16 +13,18 @@ import * as db from '../../database';
 import { registerAppIpcHandlers } from './app';
 import { registerBackgroundTaskIpcHandlers } from './background-tasks';
 import { registerMovieIpcHandlers } from './movies';
-import { setWindow, broadcast } from './notifications';
+import { broadcast, setWindow } from './notifications';
 import { registerSettingsIpcHandlers } from './settings';
+import { registerUserIpcHandlers } from './users';
 
-export { setWindow, broadcast };
+export { broadcast, setWindow };
 
 export function registerIpcHandlers(): void {
   registerAppIpcHandlers();
   registerBackgroundTaskIpcHandlers();
   registerMovieIpcHandlers();
   registerSettingsIpcHandlers();
+  registerUserIpcHandlers();
 
   if (process.env.NODE_ENV === 'test') {
     if (ipcMain.listenerCount('test:get-db-status') === 0) {

@@ -20,7 +20,7 @@ import { type UserProfile, type UserProfileData } from '../db/models/UserProfile
 import { type User, type UserData } from '../db/models/Users';
 import i18n from '../i18n';
 import { getAppDataRoot } from '../paths';
-import { safeJoin, assertPathInsideAllowedDirs } from '../security';
+import { assertPathInsideAllowedDirs, safeJoin } from '../security';
 
 export type CreateUserData = UserData;
 
@@ -36,6 +36,13 @@ export interface BasicUserInfo {
 export interface PermissionInfo {
   stub: PermissionStub;
   displayName: string;
+}
+
+export interface FirstAdminUserData {
+  username: string;
+  email?: string | null;
+  password?: string;
+  displayName?: string | null;
 }
 
 export class UserService {
@@ -56,7 +63,7 @@ export class UserService {
     }
   }
 
-  private hasUsers(): boolean {
+  hasUsers(): boolean {
     const db = getDb();
     if (!db) throw new Error('Database not initialized');
 
@@ -90,6 +97,47 @@ export class UserService {
       if (error instanceof Error) {
         log.error('[UserService.createUser] Stack:', error.stack);
       }
+      throw error;
+    }
+  }
+
+  async createFirstAdmin(data: FirstAdminUserData): Promise<User> {
+    if (this.hasUsers()) {
+      throw new AuthenticationError(this.t('errors.cannotBootstrapAdmin'));
+    }
+
+    const username = typeof data?.username === 'string' ? data.username.trim() : '';
+    if (!username) {
+      throw new Error(this.t('errors.usernameRequired'));
+    }
+
+    const { users, userProfiles, roles, userRoles } = getModels();
+    const adminRole = roles.getBySystemStub('admin');
+    if (!adminRole) {
+      throw new Error(this.t('errors.adminRoleNotFound'));
+    }
+
+    const userId = await users.create({
+      username,
+      email: data.email,
+      password: data.password,
+    });
+
+    try {
+      const db = getDb();
+      if (!db) throw new Error(this.t('errors.databaseNotInitialized'));
+      db.transaction(() => {
+        userProfiles.create(userId, {
+          displayName: data.displayName,
+        });
+        userRoles.assignRoleToUser(userId, adminRole.id);
+      })();
+
+      const user = users.getById(userId);
+      if (!user) throw new Error(this.t('errors.createdUserUnavailable'));
+      return user;
+    } catch (error) {
+      users.delete(userId);
       throw error;
     }
   }

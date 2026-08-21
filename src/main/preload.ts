@@ -52,6 +52,15 @@ export interface ElectronAPI {
     ) => Promise<{ success: boolean; error?: string }>;
     onSettingsSaved: (callback: () => void) => void;
   };
+  users: {
+    hasUsers: () => Promise<boolean>;
+    createFirstAdmin: (data: {
+      username: string;
+      email?: string | null;
+      password?: string;
+      displayName?: string | null;
+    }) => Promise<unknown>;
+  };
 }
 
 contextBridge.exposeInMainWorld('electron', {
@@ -99,6 +108,10 @@ contextBridge.exposeInMainWorld('electron', {
     onSettingsSaved: (callback: () => void) => {
       ipcRenderer.on('settings-saved', () => callback());
     },
+  },
+  users: {
+    hasUsers: () => ipcRenderer.invoke('users-has-users'),
+    createFirstAdmin: (data) => ipcRenderer.invoke('users-create-first-admin', data),
   },
 } as ElectronAPI);
 

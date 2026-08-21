@@ -48,9 +48,29 @@ export interface SettingsApi {
   onSettingsSaved(callback: () => void): () => void;
 }
 
+export interface FirstAdminUserData {
+  username: string;
+  email?: string | null;
+  password?: string;
+  displayName?: string | null;
+}
+
+export interface UserApi {
+  hasUsers(): Promise<boolean>;
+  createFirstAdmin(data: FirstAdminUserData): Promise<{
+    id: number;
+    username: string;
+    email: string | null;
+    lastLoginAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+}
+
 export interface ApiClient {
   app: AppApi;
   backgroundTasks: BackgroundTaskApi;
   movies: MovieApi;
   settings: SettingsApi;
+  users: UserApi;
 }

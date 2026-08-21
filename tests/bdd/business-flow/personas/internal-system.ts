@@ -6,7 +6,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation, version 3.
 */
 
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 import {
   createAuthContext,
@@ -16,10 +16,10 @@ import {
 } from '../../../../src/main/auth/context-manager';
 import { PERMISSIONS } from '../../../../src/main/auth/permissions';
 import { Role } from '../../../../src/main/db/models/Roles';
-import { AuthenticatedUser } from '../../../../src/main/services/UserService';
+import { User } from '../../../../src/main/db/models/Users';
+import { AuthenticatedUser, FirstAdminUserData } from '../../../../src/main/services/UserService';
 import { withTestHooks } from '../../technical/infrastructure/utils';
 import { CustomWorld } from '../../technical/infrastructure/world';
-
 /**
  * Internal System Persona - represents trusted backend operations
  * for testing business logic without transport concerns.
@@ -287,6 +287,14 @@ export class InternalSystemPersona {
   //
   // User operations
   //
+  async hasUsers(): Promise<boolean> {
+    return await this.world.usersApi.hasUsers();
+  }
+
+  async createFirstAdmin(data: FirstAdminUserData): Promise<User> {
+    return await this.world.usersApi.createFirstAdmin(data);
+  }
+
   async createUser(data: {
     username: string;
     email?: string;

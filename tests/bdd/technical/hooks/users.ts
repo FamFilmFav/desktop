@@ -9,7 +9,8 @@ the Free Software Foundation, version 3.
 import { ElectronApplication } from 'playwright';
 
 import { type AuthContextPayload } from '../../../src/main/auth/context-manager';
-import { AuthenticatedUser } from '../../../src/main/services/UserService';
+import { User } from '../../../src/main/db/models/Users';
+import { AuthenticatedUser, FirstAdminUserData } from '../../../src/main/services/UserService';
 import { withTestHooks } from '../infrastructure/utils';
 
 /**
@@ -20,6 +21,20 @@ export class Users {
 
   constructor(app: ElectronApplication) {
     this.app = app;
+  }
+
+  hasUsers(): Promise<boolean> {
+    return withTestHooks(this.app, async (hooks) => hooks.users.hasUsers());
+  }
+
+  async createFirstAdmin(data: FirstAdminUserData): Promise<User> {
+    return await withTestHooks(
+      this.app,
+      async (hooks, data) => {
+        return hooks.users.createFirstAdmin(data);
+      },
+      data,
+    );
   }
 
   /**

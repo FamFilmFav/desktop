@@ -7,10 +7,11 @@ the Free Software Foundation, version 3.
 */
 
 import {
-  MovieService,
-  SettingsService,
   BackgroundTaskService,
   LocalizationService,
+  MovieService,
+  SettingsService,
+  UserService,
 } from '../../services';
 
 // shared service instances used by the IPC handlers
@@ -18,3 +19,4 @@ export const backgroundTaskService = new BackgroundTaskService();
 export const localizationService = new LocalizationService();
 export const movieService = new MovieService();
 export const settingsService = new SettingsService();
+export const userService = new UserService();
