@@ -7,6 +7,7 @@ the Free Software Foundation, version 3.
 */
 
 export * from './BasePage';
+export * from './FirstAdminPage';
 export * from './HomePage';
-export * from './SettingsPage';
 export * from './MenuPanel';
+export * from './SettingsPage';
