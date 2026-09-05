@@ -96,7 +96,7 @@
     "i18next-http-backend": "^4.0.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.8",
-    "react-i18next": "^17.0.10",
+    "react-i18next": "^17.0.13",
     "uuid": "^14.0.2",
     "ws": "^8.21.3"
   },
